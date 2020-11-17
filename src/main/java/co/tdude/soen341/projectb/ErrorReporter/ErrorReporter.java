@@ -9,7 +9,7 @@ public class ErrorReporter {
         errorLst = new ArrayList<Error>();
     }
 
-    public record (Error error){
+    public void record (Error error){
         errorLst.add(error);
     }
 
