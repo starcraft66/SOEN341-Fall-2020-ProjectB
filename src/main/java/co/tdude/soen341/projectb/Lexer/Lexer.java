@@ -59,6 +59,10 @@ public class Lexer implements ILexer {
         read(); // prime
     }
 
+    public String getPosition() {
+        return curlinePos + ":" + curcolPos;
+    }
+
     /* Read the next character. */
 //    TODO: bring in a reader class to make this work.
     private char read() {

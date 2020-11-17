@@ -51,7 +51,7 @@ public class Parser implements IParser {
     //---------------------------------------------------------------------------------
     // Parse a 1 Byte no Operand Mnemonic
     private Instruction parseInherent() {
-        // your code...
+        return new Instruction(token.getValue(), null);
     }
     //---------------------------------------------------------------------------------
 //    private Instruction parseImmediate() {
@@ -86,7 +86,6 @@ public class Parser implements IParser {
         if (keywordTable.isRegistered(token.getValue())) {
             // If registered, then mnemonic
             // Right now, we can assume that no operand.
-            inst = new Instruction(token.getValue(), null);
             lexer.getToken();
             if (token.getType() == TokenType.COMMENT) {
                 comment = (CommentToken)token;
