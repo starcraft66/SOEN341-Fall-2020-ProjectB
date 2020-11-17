@@ -1,6 +1,7 @@
 package co.tdude.soen341.projectb.Lexer;
 
 import co.tdude.soen341.projectb.Lexer.Tokens.*;
+import co.tdude.soen341.projectb.Reader.*;
 
 public class Lexer implements ILexer {
     /** Create a lexer that scans the given character stream. */
