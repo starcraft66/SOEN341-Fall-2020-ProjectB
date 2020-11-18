@@ -12,26 +12,22 @@ import java.util.ArrayList;
 public class AssemblyUnit {
 
     private ArrayList<LineStatement> _assemblyUnit;
+    private String _outputFilePath;
 
-    public AssemblyUnit(ArrayList<LineStatement> assemblyUnit) {
+    /**
+     * @param outputFilePath The path for the output file name  
+     */
+    public AssemblyUnit(ArrayList<LineStatement> assemblyUnit, String outputFilePath) {
         _assemblyUnit = assemblyUnit;
+        _outputFilePath = outputFilePath;
     }
 
     // TODO: FOR NOW THIS IS ONLY COPYING THE FILE. THIS WILL CHANGE
     public void GenerateListing() throws IOException {
 
         int lineCount = 1;
-        String directoryName = System.getProperty("user.home");
-        String fileName = "assemblyListingFile.lst";
-//        String directoryName = "C:\\Users\\karim\\OneDrive\\Desktop";
-//        String fileName = "assemblyListingFile.lst";
-
-        File directory = new File(directoryName);
-        if (!directory.exists()){
-            directory.mkdir();
-        }
-
-        File dstFile = new File(directoryName + "/" + fileName);
+        String fileName = _outputFilePath + ".lst";
+        File dstFile = new File(fileName);
 
         FileWriter writer = new FileWriter(dstFile);
 

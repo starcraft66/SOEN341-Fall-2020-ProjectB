@@ -1,6 +1,7 @@
 package co.tdude.soen341.projectb.Reader;
 
 import java.io.*;
+import java.util.logging.Logger;
 
 /**
  * Class Reader
@@ -23,7 +24,7 @@ public class Reader implements IReader {
         try {
             this.bfReader = new BufferedReader(new FileReader(asmFile));
         } catch (FileNotFoundException e) {
-            System.out.println("File not found");
+            Logger.getLogger("").severe("File not found: " + asmFile.getAbsolutePath());
         }
     }
 
