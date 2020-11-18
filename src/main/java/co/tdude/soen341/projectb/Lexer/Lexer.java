@@ -13,7 +13,7 @@ public class Lexer implements ILexer {
     /**
      * SymbolTable that holds opcodes and their hex equivalences.
      */
-    private ISymbolTable _keywordTable;
+    //private ISymbolTable _keywordTable;
 
     /**
      * Current line position within the lexer
@@ -44,44 +44,14 @@ public class Lexer implements ILexer {
     /**
      * Constructor for a Lexer object.
      * @param reader Used to read individual characters in the assembly file.
-     * @param keywordTable Symbol table of key-value pairs that represent opcodes and their hex representations, respectively.
+     * @param //keywordTable Symbol table of key-value pairs that represent opcodes and their hex representations, respectively.
      */
-    public Lexer(IReader reader, ISymbolTable keywordTable) {
+    public Lexer(IReader reader/*, ISymbolTable keywordTable*/) {
 
-        _keywordTable = keywordTable;
+        //_keywordTable = keywordTable;
         _reader = reader;
         _curLinePos = 1;
         _curColPos = 0;
-
-//        // Enter all mnemonics as keywords in the symbol table...
-//
-//        // One byte inherent ops
-//        // It feels weird to handle them here, but that's what the prof says
-//        _keywordTable.registerSymbol("halt", 0x00);
-//        _keywordTable.registerSymbol("pop", 0x01);
-//        _keywordTable.registerSymbol("dup", 0x02);
-//        _keywordTable.registerSymbol("exit", 0x03);
-//        _keywordTable.registerSymbol("ret", 0x04);
-//        _keywordTable.registerSymbol("not", 0x0C);
-//        _keywordTable.registerSymbol("and", 0x0D);
-//        _keywordTable.registerSymbol("or", 0x0E);
-//        _keywordTable.registerSymbol("xor", 0x0F);
-//        _keywordTable.registerSymbol("neg", 0x10);
-//        _keywordTable.registerSymbol("inc", 0x11);
-//        _keywordTable.registerSymbol("dec", 0x12);
-//        _keywordTable.registerSymbol("add", 0x13);
-//        _keywordTable.registerSymbol("sub", 0x14);
-//        _keywordTable.registerSymbol("mul", 0x15);
-//        _keywordTable.registerSymbol("div", 0x16);
-//        _keywordTable.registerSymbol("rem", 0x17);
-//        _keywordTable.registerSymbol("shl", 0x18);
-//        _keywordTable.registerSymbol("shr", 0x19);
-//        _keywordTable.registerSymbol("teq", 0x1A);
-//        _keywordTable.registerSymbol("tne", 0x1B);
-//        _keywordTable.registerSymbol("tlt", 0x1C);
-//        _keywordTable.registerSymbol("tgt", 0x1D);
-//        _keywordTable.registerSymbol("tle", 0x1E);
-//        _keywordTable.registerSymbol("tge", 0x1F);
     }
 
     /**
@@ -96,7 +66,6 @@ public class Lexer implements ILexer {
      * Read the next character from the assembly file.
      */
     private char read() {
-        _curColPos++;
         try {
             _ch = _reader.read();
         } catch (IOException e) {
@@ -158,7 +127,6 @@ public class Lexer implements ILexer {
         _curColPos++;
 
         try {
-            _keywordTable.get(_lexeme);
             return new MnemonicToken(_lexeme);
         }
         catch (ValueNotExist e) {
@@ -197,7 +165,6 @@ public class Lexer implements ILexer {
 
         // skip whitespaces
         while (Character.isWhitespace(_ch) && _ch != '\n' && _ch != '\r' && _ch != '\0') {
-            _curColPos++;
             _ch = read();
         }
 

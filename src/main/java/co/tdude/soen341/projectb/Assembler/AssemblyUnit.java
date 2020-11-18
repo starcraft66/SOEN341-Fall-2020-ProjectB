@@ -12,11 +12,9 @@ import java.util.ArrayList;
 public class AssemblyUnit {
 
     private ArrayList<LineStatement> _assemblyUnit;
-    private SymbolTable _symbolTable;
 
     public AssemblyUnit(ArrayList<LineStatement> assemblyUnit) {
         _assemblyUnit = assemblyUnit;
-        _symbolTable = new SymbolTable();
     }
 
     // TODO: FOR NOW THIS IS ONLY COPYING THE FILE. THIS WILL CHANGE
@@ -39,11 +37,12 @@ public class AssemblyUnit {
 
         for(LineStatement lineStatement: _assemblyUnit) {
             Instruction mnemonic = lineStatement.getInst();
+
             if (mnemonic == null) {
                 continue;
             }
             else {
-                int value = _symbolTable.get(mnemonic.toString());
+                int value = SymbolTable.getMnemonic(mnemonic.toString());
                 String hex = Integer.toHexString(value);
 
                 if (hex.length() == 1 && String.valueOf(lineCount).length() == 1) {
@@ -58,6 +57,7 @@ public class AssemblyUnit {
                 ++lineCount;
             }
         }
+
         writer.close();
     }
 

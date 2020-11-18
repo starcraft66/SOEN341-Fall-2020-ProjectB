@@ -20,8 +20,8 @@ public class Environment {
    public Environment(File asmFile){
       this.asmFile = asmFile;
       this.reader = new Reader(this.asmFile);
-      this.symTable = new SymbolTable();
-      this.lexer = new Lexer(reader, symTable);
+//      this.symTable = new SymbolTable();
+      this.lexer = new Lexer(reader/*, symTable*/);
       //TODO : Add instantiation of ErrorReporter
    }
 

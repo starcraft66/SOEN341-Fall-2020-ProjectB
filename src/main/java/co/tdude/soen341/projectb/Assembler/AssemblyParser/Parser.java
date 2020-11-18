@@ -9,7 +9,7 @@ import co.tdude.soen341.projectb.Lexer.Tokens.Token;
 import co.tdude.soen341.projectb.Lexer.Tokens.TokenType;
 import co.tdude.soen341.projectb.Node.Instruction;
 import co.tdude.soen341.projectb.Node.LineStatement;
-import co.tdude.soen341.projectb.SymbolTable.ISymbolTable;
+import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,12 +46,12 @@ public class Parser implements IParser {
     /**
      * SymbolTable that stores labels and their hex equivalents.
      */
-    private ISymbolTable _labelTable;
+    //private ISymbolTable _labelTable;
 
     /**
      * Symbol table that stores opcodes and their hex equivalents.
      */
-    private ISymbolTable _keywordTable;
+    //private ISymbolTable _keywordTable;
 
     /**
      * Constructor to instantiate a Parser object.
@@ -62,8 +62,8 @@ public class Parser implements IParser {
         _lexer = env.getLexer();
         _sourceFile = env.getSourceFile();
         //this.errorReporter = env.getErrorReporter(); TODO ONCE ERREPORTER IS IN
-        _labelTable = env.getSymbolTable();
-        _keywordTable = env.getSymbolTable();
+        //_labelTable = env.getSymbolTable();
+        //_keywordTable = env.getSymbolTable();
 
         nextToken(); // prime
         // address = 0; Don't know what this is for
@@ -141,7 +141,7 @@ public class Parser implements IParser {
             return new LineStatement(null, null, (CommentToken) _token);
         }
 
-        if (_keywordTable.isRegistered(_token.getValue())) {
+        if (SymbolTable.isMnemonicRegistered(_token.getValue())) {
             // If registered, then mnemonic
             // Right now, we can assume that no operand.
             //_lexer.getToken();

@@ -6,6 +6,7 @@ public class LineStatement extends Node {
     LabelToken label;
     Instruction inst;
     CommentToken comment;
+
     public LineStatement(LabelToken label, Instruction inst, CommentToken comment) {
         this.label = label;
         this.inst = inst;
