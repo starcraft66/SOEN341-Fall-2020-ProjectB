@@ -13,7 +13,7 @@ application {
 
 run {
     standardInput = System.in
-    args "C:\\Users\\karim\\OneDrive\\Documents\\computer_engineering\\fall_2020\\SOEN_341\\projects\\project_B\\asmTestFile.asm"
+    args "asmTestFile.asm"
 }
 
 repositories {

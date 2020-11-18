@@ -21,8 +21,10 @@ public class AssemblyUnit {
     public void GenerateListing() throws IOException {
 
         int lineCount = 1;
-        String directoryName = "C:\\Users\\karim\\OneDrive\\Desktop";
+        String directoryName = System.getProperty("user.home");
         String fileName = "assemblyListingFile.lst";
+//        String directoryName = "C:\\Users\\karim\\OneDrive\\Desktop";
+//        String fileName = "assemblyListingFile.lst";
 
         File directory = new File(directoryName);
         if (!directory.exists()){
