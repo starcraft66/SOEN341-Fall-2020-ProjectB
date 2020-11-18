@@ -6,144 +6,200 @@ import co.tdude.soen341.projectb.Reader.*;
 
 import java.io.IOException;
 
+/**
+ * Lexical Analyzer (Lexer) used to extract tokens from an assembly file.
+ */
 public class Lexer implements ILexer {
-    /** Create a lexer that scans the given character stream. */
-    private SymbolTable keywordTable;
-    private int linePos, colPos, curlinePos, curcolPos;
-    private char ch;
-    // The purpose of the lexeme is to store the contents of the token, while the getToken function returns the
-    // "Type" of the lexeme.
+    /**
+     * SymbolTable that holds opcodes and their hex equivalences.
+     */
+    private ISymbolTable _keywordTable;
 
-    IReader reader;
-    private String lexeme;
+    /**
+     * Current line position within the lexer
+     */
+    private int _curLinePos;
 
+    /**
+     * Current column position within the lexer
+     */
+    private int _curColPos;
+
+    /**
+     * Current character being read from the assembly file.
+     */
+    private char _ch;
+
+    /**
+     * Used to read characters
+     */
+    private IReader _reader;
+
+    /**
+     * The purpose of the _lexeme is to store the contents of the token, while the getToken function returns
+     * the "Type" of the _lexeme.
+     */
+    private String _lexeme;
+
+    /**
+     * Constructor for a Lexer object.
+     * @param reader Used to read individual characters in the assembly file.
+     * @param keywordTable Symbol table of key-value pairs that represent opcodes and their hex representations, respectively.
+     */
     public Lexer(IReader reader, ISymbolTable keywordTable) {
 
-        this.reader = reader;
+        _keywordTable = keywordTable;
+        _reader = reader;
+        _curLinePos = 1;
+        _curColPos = 1;
 
         // Enter all mnemonics as keywords in the symbol table...
 
         // One byte inherent ops
         // It feels weird to handle them here, but that's what the prof says
-        keywordTable.registerSymbol("halt", 0x00);
-        keywordTable.registerSymbol("pop", 0x01);
-        keywordTable.registerSymbol("dup", 0x02);
-        keywordTable.registerSymbol("exit", 0x03);
-        keywordTable.registerSymbol("ret", 0x04);
-        keywordTable.registerSymbol("not", 0x0C);
-        keywordTable.registerSymbol("and", 0x0D);
-        keywordTable.registerSymbol("or", 0x0E);
-        keywordTable.registerSymbol("xor", 0x0F);
-        keywordTable.registerSymbol("neg", 0x10);
-        keywordTable.registerSymbol("inc", 0x11);
-        keywordTable.registerSymbol("dec", 0x12);
-        keywordTable.registerSymbol("add", 0x13);
-        keywordTable.registerSymbol("sub", 0x14);
-        keywordTable.registerSymbol("mul", 0x15);
-        keywordTable.registerSymbol("div", 0x16);
-        keywordTable.registerSymbol("rem", 0x17);
-        keywordTable.registerSymbol("shl", 0x18);
-        keywordTable.registerSymbol("shr", 0x19);
-        keywordTable.registerSymbol("teq", 0x1A);
-        keywordTable.registerSymbol("tne", 0x1B);
-        keywordTable.registerSymbol("tlt", 0x1C);
-        keywordTable.registerSymbol("tgt", 0x1D);
-        keywordTable.registerSymbol("tle", 0x1E);
-        keywordTable.registerSymbol("tge", 0x1F);
-
-        linePos = 1;
-        colPos = 0;
-        curlinePos = linePos;
-        curcolPos = colPos;
-
-        read(); // prime
+        _keywordTable.registerSymbol("halt", 0x00);
+        _keywordTable.registerSymbol("pop", 0x01);
+        _keywordTable.registerSymbol("dup", 0x02);
+        _keywordTable.registerSymbol("exit", 0x03);
+        _keywordTable.registerSymbol("ret", 0x04);
+        _keywordTable.registerSymbol("not", 0x0C);
+        _keywordTable.registerSymbol("and", 0x0D);
+        _keywordTable.registerSymbol("or", 0x0E);
+        _keywordTable.registerSymbol("xor", 0x0F);
+        _keywordTable.registerSymbol("neg", 0x10);
+        _keywordTable.registerSymbol("inc", 0x11);
+        _keywordTable.registerSymbol("dec", 0x12);
+        _keywordTable.registerSymbol("add", 0x13);
+        _keywordTable.registerSymbol("sub", 0x14);
+        _keywordTable.registerSymbol("mul", 0x15);
+        _keywordTable.registerSymbol("div", 0x16);
+        _keywordTable.registerSymbol("rem", 0x17);
+        _keywordTable.registerSymbol("shl", 0x18);
+        _keywordTable.registerSymbol("shr", 0x19);
+        _keywordTable.registerSymbol("teq", 0x1A);
+        _keywordTable.registerSymbol("tne", 0x1B);
+        _keywordTable.registerSymbol("tlt", 0x1C);
+        _keywordTable.registerSymbol("tgt", 0x1D);
+        _keywordTable.registerSymbol("tle", 0x1E);
+        _keywordTable.registerSymbol("tge", 0x1F);
     }
 
+    /**
+     * Gets the current column and line position being parsed in the assembly file.
+     * @return A String with the current column and line position.
+     */
     public String getPosition() {
-        return curlinePos + ":" + curcolPos;
+        return _curLinePos + ":" + _curColPos;
     }
 
-    /* Read the next character. */
-//    TODO: bring in a reader class to make this work.
+    /**
+     * Read the next character from the assembly file.
+     */
     private char read() {
-        colPos++;
+        _curColPos++;
         try {
-            ch = reader.read();
+            _ch = _reader.read();
         } catch (IOException e) {
             // IO EXCEPTION!
             System.exit(1);
         }
-        return ch;
+        return _ch;
     }
 
+    /**
+     *
+     * @param t
+     */
     private void error(String t) {
 //         errorReporter.record( _Error.create(t, getPosition()) ); TODO: Bring in the Error Reporter
 //         Shouldn't this exit in some way?
     }
 
-    // The scanX() family of functions will progress along the file using read() searching for whitespace to
-    // terminate the lexeme. It builds up the lexeme in the `lexeme` member variable with string concatenation
-    // because I'm lazy. It finally performs some final validation to ensure that the token is in the expected format
-    // (e.g. a number does not have any non-number elements in it)
+
+    /*
+     * The scanX() family of functions will progress along the file using read() searching for whitespace to
+     * terminate the _lexeme. It builds up the _lexeme in the `_lexeme` member variable with string concatenation
+     * because I'm lazy. It finally performs some final validation to ensure that the token is in the expected format
+     * (e.g. a number does not have any non-number elements in it)
+     */
+
+    /**
+     *
+     * @return
+     */
     private Token scanNumber() {
-        while (!Character.isWhitespace(ch) && ch != '\0') {
-            lexeme += ch;
-            ch = read();
+        while (!Character.isWhitespace(_ch) && _ch != '\0') {
+            _lexeme += _ch;
+            _ch = read();
         }
         try {
-            Integer.parseInt(lexeme);
+            Integer.parseInt(_lexeme);
         } catch (NumberFormatException e) {
             error(e.getMessage());
         }
-        return new NumberToken(lexeme);
+        return new NumberToken(_lexeme);
     }
+
+    /**
+     * Iterates through the read alphabetical characters and tries to identify whether it is a mnemonic token or identifier token.
+     * @return A mnemonic token or identifier token, depending on the the string of characters read.
+     */
     private Token scanIdentifier() {
-        while (!Character.isWhitespace(ch) && ch != '\0') {
-            lexeme += ch;
-            if (!(Character.isAlphabetic(ch) || Character.isDigit(ch))) {
+        while (!Character.isWhitespace(_ch) && _ch != '\0') {
+            _lexeme += _ch;
+            if (!(Character.isAlphabetic(_ch) || Character.isDigit(_ch))) {
                 error("The Identifier had a non-ident character in it");
             }
-            ch = read();
+            else {
+                _ch = read();
+            }
         }
+
+        _curColPos++;
+
         try {
-            keywordTable.get(lexeme);
-            return new MnemonicToken(lexeme);
-        } catch (ValueNotExist e) {
-            return new IdentifierToken(lexeme);
+            _keywordTable.get(_lexeme);
+            return new MnemonicToken(_lexeme);
+        }
+        catch (ValueNotExist e) {
+            return new IdentifierToken(_lexeme);
         }
     }
+
 //    private Token scanDirective() {
 //        // TODO: Sprint 2
 //    }
+
 //    private Token scanString() {
 //        // TODO: Sprint 2
 //    }
+
     private Token scanComment() {
-        while (ch != '\n' && ch != '\r' && ch != '\0') { // Not endline or EOF
-            lexeme += ch;
-            ch = read();
+        while (_ch != '\n' && _ch != '\r' && _ch != '\0') { // Not endline or EOF
+            _lexeme += _ch;
+            _ch = read();
         }
-        return new CommentToken(lexeme);
+        return new CommentToken(_lexeme);
     }
+
     /**
      * Scan the next token. Mark position on entry in case of error.
-     * @return   the token.
+     * @return The token.
      */
     public Token getToken() {
-        // skip whitespaces
-        // "\n", "\r\n", "\n", or line comments are considered as EOL
-
-        // your code...
+        _lexeme = "";
 
         // Mark position (after skipping blanks)
-        curlinePos = linePos;
-        curcolPos = colPos;
+        //curlinePos = linePos;
+        //curcolPos = colPos;
 
-        lexeme = "";
+        // skip whitespaces
+        while (Character.isWhitespace(_ch) && _ch != '\n' && _ch != '\r' && _ch != '\0') {
+            _curColPos++;
+        }
 
-        switch ( ch ) {
-
-            // As his usage of '-1' doesn't work in java chars, we'll send a null byte from reader.read if the EOF
+        switch ( _ch ) {
+            // As his usage of '-1' doesn't work in java chars, we'll send a null byte from _reader.read if the EOF
             // was reached.
             case '\0':
                 return new EOFToken();
@@ -154,8 +210,8 @@ public class Lexer implements ILexer {
                 }
             case '\n':
                 // I think this works to carriage return on to the next line of source
-                colPos = 0;
-                linePos++;
+                _curColPos = 1;
+                _curLinePos++;
                 return new EOLToken();
 
             case 'a': case 'b': case 'c': case 'd': case 'e':
@@ -195,6 +251,6 @@ public class Lexer implements ILexer {
 
     // No setter as Lexeme is only mutated inside Lexer
     public String getLexeme() {
-        return lexeme;
+        return _lexeme;
     }
 }
