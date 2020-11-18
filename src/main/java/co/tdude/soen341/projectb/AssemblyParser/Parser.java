@@ -87,10 +87,8 @@ public class Parser implements IParser {
             // If registered, then mnemonic
             // Right now, we can assume that no operand.
             lexer.getToken();
-            if (token.getType() == TokenType.COMMENT) {
-                comment = (CommentToken)token;
-                new LineStatement(null, inst, comment);
-            }
+            inst = parseInherent();
+            return new LineStatement(null, inst, null);
         } else {
             // If not registered, then label
             // TODO Label processing
