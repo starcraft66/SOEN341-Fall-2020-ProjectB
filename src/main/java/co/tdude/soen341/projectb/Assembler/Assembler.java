@@ -9,6 +9,7 @@ import java.io.IOException;
 public class Assembler {
     public static void main(String[] args) throws IOException {
         File asmFile = new File(args[0]);
+        SourceFile.StoreAssemblyFile(asmFile);
         Environment environment = new Environment(asmFile);
         Parser assemblyParser = new Parser(environment);
         AssemblyUnit assemblyUnit = assemblyParser.parse();
