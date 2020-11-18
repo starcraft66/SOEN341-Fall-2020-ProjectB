@@ -198,6 +198,7 @@ public class Lexer implements ILexer {
         // skip whitespaces
         while (Character.isWhitespace(_ch) && _ch != '\n' && _ch != '\r' && _ch != '\0') {
             _curColPos++;
+            _ch = read();
         }
 
         switch ( _ch ) {
