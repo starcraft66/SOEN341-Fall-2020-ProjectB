@@ -11,7 +11,7 @@ abstract public class Token {
         return type;
     }
 
-    Token(String lexeme) {
+    public Token(String lexeme) {
         value = lexeme;
     }
 }

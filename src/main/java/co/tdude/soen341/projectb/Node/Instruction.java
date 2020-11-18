@@ -7,4 +7,9 @@ public class Instruction {
     public Instruction(String value, Object operand) { // Replace operand with the operand class once it's in
         mnemonic = value;
     }
+
+    @Override
+    public String toString() {
+        return mnemonic;
+    }
 }

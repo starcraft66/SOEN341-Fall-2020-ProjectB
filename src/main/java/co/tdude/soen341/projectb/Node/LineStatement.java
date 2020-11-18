@@ -11,4 +11,8 @@ public class LineStatement extends Node {
         this.inst = inst;
         this.comment = comment;
     }
+
+    public Instruction getInst() {
+        return inst;
+    }
 }
