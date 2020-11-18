@@ -1,10 +1,20 @@
 plugins {
     id 'java'
     id 'idea'
+    id 'application'
 }
 
 group 'co.tdude.soen341.projectb'
 version '1.0-SNAPSHOT'
+
+application {
+    mainClassName = "co.tdude.soen341.projectb.Assembler.Assembler"
+}
+
+run {
+    standardInput = System.in
+    args "asmTestFile.asm"
+}
 
 repositories {
     mavenCentral()
