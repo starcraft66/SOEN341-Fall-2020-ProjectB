@@ -5,10 +5,6 @@ import co.tdude.soen341.projectb.Lexer.Tokens.Token;
 public class Error {
 
 
-
-
-
-
         String message;
         public enum err_type{
             INCORRECT,
