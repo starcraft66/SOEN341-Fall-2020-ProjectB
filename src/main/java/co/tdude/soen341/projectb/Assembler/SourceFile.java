@@ -1,4 +1,4 @@
-package Assembler;
+package co.tdude.soen341.projectb.Assembler;
 
 import java.io.File;
 
