@@ -80,7 +80,7 @@ public class Lexer implements ILexer {
      * @param t
      */
     private void error(String t) {
-//         errorReporter.record( _Error.create(t, getPosition()) ); TODO: Bring in the Error Reporter
+        //errorReporter.record( Error.create(t, getPosition()) ); //TODO: Bring in the Error Reporter
 //         Shouldn't this exit in some way?
     }
 

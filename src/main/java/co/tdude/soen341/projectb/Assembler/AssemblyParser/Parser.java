@@ -149,6 +149,9 @@ public class Parser implements IParser {
             return new LineStatement(null, inst, null);
         }
         else {
+            //Error e1 = new Error();
+            //e1.generatemsg(Error.err_type.INCORRECT, lexer.getPosition(), token);
+            //erReporter.record(e1);
             // If not registered, then label
             // TODO Label processing
         }
