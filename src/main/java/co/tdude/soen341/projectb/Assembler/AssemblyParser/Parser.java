@@ -13,6 +13,7 @@ import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * Parses the assembly file and extracts a list of LineStatements.
@@ -44,6 +45,11 @@ public class Parser implements IParser {
     private ArrayList<LineStatement> _assemblyUnit;
 
     /**
+     * The path to the output binary file (and listing)
+     */
+    private String _outputFilePath;
+
+    /**
      * SymbolTable that stores labels and their hex equivalents.
      */
     //private ISymbolTable _labelTable;
@@ -56,11 +62,13 @@ public class Parser implements IParser {
     /**
      * Constructor to instantiate a Parser object.
      * @param env Environment object that supplies the instantiated assembly file, lexer object, and symbol tables.
+     * @param outputFilePath The path for the output file name (and listing with .lst suffix)
      */
-    public Parser(Environment env) {
+    public Parser(Environment env, String outputFilePath) {
         _assemblyUnit = new ArrayList<>();
         _lexer = env.getLexer();
         _sourceFile = env.getSourceFile();
+        _outputFilePath = outputFilePath;
         //this.errorReporter = env.getErrorReporter(); TODO ONCE ERREPORTER IS IN
         //_labelTable = env.getSymbolTable();
         //_keywordTable = env.getSymbolTable();
@@ -91,14 +99,14 @@ public class Parser implements IParser {
      * @return
      */
     public AssemblyUnit parse() {
-        System.out.println("Parsing an Assembler...");
+        Logger.getLogger("").fine("Parsing an Assembler...");
 
         while (_token.getType() != TokenType.EOF) {
             _assemblyUnit.add(parseLineStmt());
             nextToken();
         }
 
-        return new AssemblyUnit(_assemblyUnit);
+        return new AssemblyUnit(_assemblyUnit, _outputFilePath);
     }
 
     //---------------------------------------------------------------------------------
@@ -130,7 +138,7 @@ public class Parser implements IParser {
         Instruction  inst = null;
         CommentToken comment = null;
 
-        System.out.println("Parsing a Line Statement...");
+        Logger.getLogger("").fine("Parsing a Line Statement...");
 
         // Test if EOL first
         if (_token.getType() == TokenType.EOL) {

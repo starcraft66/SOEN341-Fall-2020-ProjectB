@@ -9,11 +9,12 @@ version '1.0-SNAPSHOT'
 
 application {
     mainClassName = "co.tdude.soen341.projectb.Assembler.Assembler"
+    applicationDefaultJvmArgs = ['-Djava.util.logging.config.file=src/main/resources/logging.properties']
 }
 
 run {
     standardInput = System.in
-    args "asmTestFile.asm"
+    args = ["-v", "-l", "asmTestFile.asm"]
 }
 
 repositories {
@@ -21,6 +22,7 @@ repositories {
 }
 
 dependencies {
+    compile group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.8.1'
     testImplementation(platform('org.junit:junit-bom:5.7.0'))
     testImplementation('org.junit.jupiter:junit-jupiter')
 }
