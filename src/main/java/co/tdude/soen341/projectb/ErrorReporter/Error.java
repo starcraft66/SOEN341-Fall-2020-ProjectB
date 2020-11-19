@@ -2,6 +2,7 @@ package co.tdude.soen341.projectb.ErrorReporter;
 
 import co.tdude.soen341.projectb.Lexer.Tokens.Token;
 
+
 public class Error {
 
 
@@ -13,6 +14,7 @@ public class Error {
     /**
      * Constructor of Error
      * @param msg: error message which will be displayed
+
      */
         public Error(String msg)
         {
@@ -42,4 +44,5 @@ public class Error {
 
 
         }
+
     }

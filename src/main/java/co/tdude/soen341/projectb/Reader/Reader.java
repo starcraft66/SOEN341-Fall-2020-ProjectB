@@ -1,14 +1,19 @@
 package co.tdude.soen341.projectb.Reader;
 
 import java.io.*;
+import java.util.logging.Logger;
 
 /**
- * Class Reader
- * @author David Molina (40111257)
+ * Used to read characters from the assembly file.
  */
 public class Reader implements IReader {
     private BufferedReader bfReader;
 
+    /**
+     * Reads one character at a time from the assembly file.
+     * @return The next character.
+     * @throws IOException
+     */
     @Override
     public char read() throws IOException {
         int nextChar = bfReader.read();
@@ -16,14 +21,14 @@ public class Reader implements IReader {
     }
 
     /**
-     * Constructor of Reader
-     * @param asmFile: The assembly file to be read
+     * Constructor used to create a Reader object.
+     * @param asmFile: The assembly file to be read.
      */
     public Reader(File asmFile) {
         try {
             this.bfReader = new BufferedReader(new FileReader(asmFile));
         } catch (FileNotFoundException e) {
-            System.out.println("File not found");
+            Logger.getLogger("").severe("File not found: " + asmFile.getAbsolutePath());
         }
     }
 
