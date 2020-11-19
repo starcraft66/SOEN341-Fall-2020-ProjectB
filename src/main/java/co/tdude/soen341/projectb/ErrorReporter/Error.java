@@ -1,26 +1,49 @@
 package co.tdude.soen341.projectb.ErrorReporter;
 
-public class Error {
-    String description;
-    Position position;
+import co.tdude.soen341.projectb.Lexer.Tokens.Token;
 
+public class Error {
+
+
+
+
+
+
+        String message;
+        public enum err_type{
+            INCORRECT,
+
+        }
     /**
      * Constructor of Error
-     * @param description: description of the error
-     * @param position: line and column of the location
+     * @param msg: error message which will be displayed
      */
-    public Error(String description, Position position){
-        this.description = description;
-        this.position = position;
-    }
+        public Error(String msg)
+        {
+            this.message=msg;
 
+        }
+        public Error()
+        {
+            this("");
+
+        }
     /**
-     * Creating an error
-     * @param desc: description of the error
+     * Creating an error message
+     * @param type: enum representing the error type
      * @param pos: position (line, column) of the error
-     * @return: error object
+     * @param probl :token which contains the error
      */
-    public Error create (String desc, Position pos){
-        return  new Error(desc, pos);
+
+        public void generatemsg (err_type type, String pos, Token probl){
+            switch(type){
+                case INCORRECT:
+                    new Error("Position: "+pos+"   "+probl.getValue()+" is not a recognized opcode.");
+
+                default:
+                    new Error("Unknown error");
+            }
+
+
+        }
     }
-}

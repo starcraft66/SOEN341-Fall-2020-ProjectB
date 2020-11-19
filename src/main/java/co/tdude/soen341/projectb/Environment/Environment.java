@@ -3,6 +3,8 @@ package co.tdude.soen341.projectb.Environment;
 import co.tdude.soen341.projectb.Lexer.Lexer;
 import co.tdude.soen341.projectb.Reader.Reader;
 import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
+import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
+
 
 import java.io.*;
 
@@ -11,8 +13,7 @@ public class Environment {
    private Lexer lexer;
    private Reader reader;
    private SymbolTable symTable;
-   //TODO : Add field for ErrorReporter
-
+   private ErrorReporter eReporter;
    /**
     * constructor of Environment
     * @param asmFile: Assembly source file
@@ -22,7 +23,7 @@ public class Environment {
       this.reader = new Reader(this.asmFile);
 //      this.symTable = new SymbolTable();
       this.lexer = new Lexer(reader/*, symTable*/);
-      //TODO : Add instantiation of ErrorReporter
+      this.eReporter=new ErrorReporter();
    }
 
    public Lexer getLexer() {
@@ -37,9 +38,8 @@ public class Environment {
       return asmFile;
    }
 
-   /* TODO: Introduce getErrorReporter()
    public ErrorReporter getErrorReporter (){
       return eReporter;
    }
-    */
+
 }

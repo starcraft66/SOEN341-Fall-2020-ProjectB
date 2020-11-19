@@ -1,8 +1,11 @@
 package co.tdude.soen341.projectb.Lexer;
 
+import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
 import co.tdude.soen341.projectb.Lexer.Tokens.*;
 import co.tdude.soen341.projectb.SymbolTable.*;
 import co.tdude.soen341.projectb.Reader.*;
+import co.tdude.soen341.projectb.ErrorReporter.Error;
+
 
 import java.io.IOException;
 
@@ -34,6 +37,8 @@ public class Lexer implements ILexer {
      * Used to read characters
      */
     private IReader _reader;
+
+    private ErrorReporter ereport;
 
     /**
      * The purpose of the _lexeme is to store the contents of the token, while the getToken function returns
@@ -76,11 +81,12 @@ public class Lexer implements ILexer {
     }
 
     /**
-     *
-     * @param t
+     *Creates a new error and adds it to ErrorReporter
+     * @param msg: error message which is to be added to ErrorReporter
      */
-    private void error(String t) {
-        //errorReporter.record( Error.create(t, getPosition()) ); //TODO: Bring in the Error Reporter
+    private void LexerError(String msg) {
+        Error e1=new Error(msg);
+        ereport.record(e1);
 //         Shouldn't this exit in some way?
     }
 
@@ -104,7 +110,7 @@ public class Lexer implements ILexer {
         try {
             Integer.parseInt(_lexeme);
         } catch (NumberFormatException e) {
-            error(e.getMessage());
+            LexerError(e.getMessage());
         }
         return new NumberToken(_lexeme);
     }
@@ -117,7 +123,7 @@ public class Lexer implements ILexer {
         while (!Character.isWhitespace(_ch) && _ch != '\0') {
             _lexeme += _ch;
             if (!(Character.isAlphabetic(_ch) || Character.isDigit(_ch))) {
-                error("The Identifier had a non-ident character in it");
+                LexerError("Position: "+ getPosition()+" The Identifier had a non-ident character in it");
             }
             else {
                 _ch = read();
@@ -176,7 +182,7 @@ public class Lexer implements ILexer {
 
             case '\r':
                 if (read() != '\n') {
-                    error("a \\r character must be followed by a \\n on dos architectures");
+                    LexerError("Position: "+ getPosition()+" A \\r character must be followed by a \\n on dos architectures");
                 }
             case '\n':
                 // I think this works to carriage return on to the next line of source
@@ -214,7 +220,7 @@ public class Lexer implements ILexer {
 
             default:
                 read();
-                error("Illegal Token Detected");
+                LexerError("Position:"+getPosition()+" Illegal Token Detected");
                 return new IllegalToken();
         }
     }

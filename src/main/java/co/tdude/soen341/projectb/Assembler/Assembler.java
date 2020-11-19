@@ -14,5 +14,6 @@ public class Assembler {
         Parser assemblyParser = new Parser(environment);
         AssemblyUnit assemblyUnit = assemblyParser.parse();
         assemblyUnit.GenerateListing();
+        environment.getErrorReporter();
     }
 }
