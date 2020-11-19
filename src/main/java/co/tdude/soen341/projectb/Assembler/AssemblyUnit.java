@@ -9,12 +9,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Holds the list of LineStatement objects that represents the entire .asm file.
+ */
 public class AssemblyUnit {
 
+    /**
+     * List of LineStatement objects.
+     */
     private ArrayList<LineStatement> _assemblyUnit;
     private String _outputFilePath;
 
     /**
+     * Constructor used to instantiate an AssemblyUnit object.
+     * @param assemblyUnit The list of LineStatement objects that models the Assembly Unit.
      * @param outputFilePath The path for the output file name  
      */
     public AssemblyUnit(ArrayList<LineStatement> assemblyUnit, String outputFilePath) {
@@ -22,7 +30,10 @@ public class AssemblyUnit {
         _outputFilePath = outputFilePath;
     }
 
-    // TODO: FOR NOW THIS IS ONLY COPYING THE FILE. THIS WILL CHANGE
+    /**
+     * Generate a listing file in the user's home directory.
+     * @throws IOException
+     */
     public void GenerateListing() throws IOException {
 
         int lineCount = 1;
@@ -59,10 +70,19 @@ public class AssemblyUnit {
         writer.close();
     }
 
+    /**
+     * Gets the list of LineStatement objects.
+     * @return ArrayList of LineStatements that make up the AssemblyUnit.
+     */
     public ArrayList<LineStatement> getAssemblyUnit() {
         return _assemblyUnit;
     }
 
+    /**
+     * Writes a header to the listing file.
+     * @param writer FileWriter used to write to the listing file.
+     * @throws IOException
+     */
     private void WriteHeader(FileWriter writer) throws IOException {
         writer.write("OBJ       " + "LINE   " + "SOURCE\n");
     }

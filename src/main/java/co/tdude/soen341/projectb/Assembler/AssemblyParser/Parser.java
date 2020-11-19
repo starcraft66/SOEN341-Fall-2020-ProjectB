@@ -40,7 +40,7 @@ public class Parser implements IParser {
     //private IReportable errorReporter;
 
     /**
-     *
+     * The list of LineStatements that comprise the AssumblyUnit.
      */
     private ArrayList<LineStatement> _assemblyUnit;
 
@@ -48,16 +48,6 @@ public class Parser implements IParser {
      * The path to the output binary file (and listing)
      */
     private String _outputFilePath;
-
-    /**
-     * SymbolTable that stores labels and their hex equivalents.
-     */
-    //private ISymbolTable _labelTable;
-
-    /**
-     * Symbol table that stores opcodes and their hex equivalents.
-     */
-    //private ISymbolTable _keywordTable;
 
     /**
      * Constructor to instantiate a Parser object.
@@ -70,11 +60,8 @@ public class Parser implements IParser {
         _sourceFile = env.getSourceFile();
         _outputFilePath = outputFilePath;
         //this.errorReporter = env.getErrorReporter(); TODO ONCE ERREPORTER IS IN
-        //_labelTable = env.getSymbolTable();
-        //_keywordTable = env.getSymbolTable();
 
-        nextToken(); // prime
-        // address = 0; Don't know what this is for
+        nextToken();
     }
 
     protected void expect(TokenType expected, TokenType test) {
@@ -92,11 +79,9 @@ public class Parser implements IParser {
         //errorReporter.record( _Error.create(t, Lexer.getPosition()) );
     }
 
-    private class SyntaxError extends Exception {}
-
     /**
-     *
-     * @return
+     * Parses the assembly file for tokens, creates LineStatements, and adds them to a list.
+     * @return The assembly unit that is comprised of all the LineStatements.
      */
     public AssemblyUnit parse() {
         Logger.getLogger("").fine("Parsing an Assembler...");
@@ -109,8 +94,9 @@ public class Parser implements IParser {
         return new AssemblyUnit(_assemblyUnit, _outputFilePath);
     }
 
-    //---------------------------------------------------------------------------------
-    // Parse a 1 Byte no Operand Mnemonic
+    /**
+     * Parse a 1 Byte no Operand Mnemonic
+     */
     private Instruction parseInherent() {
         return new Instruction(_token.getValue(), null);
     }
@@ -125,14 +111,10 @@ public class Parser implements IParser {
 //        // your code...
 //    } TODO: Sprint 2
 
-    // -------------------------------------------------------------------
-    // A line statement:
-    //   - could be empty (only a EOL);
-    //   - could have a single comment start at BOL or after a label, label/inst, or label/dir;
-    //   - could have a label only, etc.
-    //
-    // LineStatement = [Label] [Instruction | Directive ] [Comment] EOL .
-    //
+    /**
+     * Creates a LineStatement object depending on the type of token being parsed.
+     * @return A new LineStatement object.
+     */
     private LineStatement parseLineStmt() {
         LabelToken   label = null;
         Instruction  inst = null;
