@@ -46,5 +46,12 @@ public class Error {
 
 
         }
+public String getmsg(){
+
+            return this.message;
+
+}
+
+
 
     }

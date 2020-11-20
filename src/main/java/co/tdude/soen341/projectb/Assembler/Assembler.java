@@ -70,6 +70,7 @@ public class Assembler {
             assemblyUnit.GenerateListing();
         }
         Logger.getLogger("").info("Assembly parsing done");
-
+        System.out.println(environment.getErrorReporter().getErrorLst().toString());
     }
+
 }
