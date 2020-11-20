@@ -2,6 +2,9 @@ package co.tdude.soen341.projectb.Assembler.AssemblyParser;
 
 import co.tdude.soen341.projectb.Assembler.AssemblyUnit;
 import co.tdude.soen341.projectb.Environment.Environment;
+import co.tdude.soen341.projectb.ErrorReporter.Error;
+import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
+import co.tdude.soen341.projectb.ErrorReporter.IReportable;
 import co.tdude.soen341.projectb.Lexer.ILexer;
 import co.tdude.soen341.projectb.Lexer.Tokens.CommentToken;
 import co.tdude.soen341.projectb.Lexer.Tokens.LabelToken;
@@ -37,7 +40,7 @@ public class Parser implements IParser {
     /**
      *
      */
-    //private IReportable errorReporter;
+    private IReportable errorReporter;
 
     /**
      * The list of LineStatements that comprise the AssumblyUnit.
@@ -58,26 +61,15 @@ public class Parser implements IParser {
         _assemblyUnit = new ArrayList<>();
         _lexer = env.getLexer();
         _sourceFile = env.getSourceFile();
+        this.errorReporter = env.getErrorReporter();
+        //_labelTable = env.getSymbolTable();
+        //_keywordTable = env.getSymbolTable();
         _outputFilePath = outputFilePath;
-        //this.errorReporter = env.getErrorReporter(); TODO ONCE ERREPORTER IS IN
 
         nextToken();
     }
 
-    protected void expect(TokenType expected, TokenType test) {
-        if (expected != test) {
-            error("The Token Type " + expected.name() + " was expected, but we got a " + test.name());
-        }
-    }
 
-    // Record the error: <t> expected, found <_token> at <_token>.position
-    protected void expect(String t) {
-        //errorReporter.record( _Error.create(t+" expected", Lexer.getPosition()) );
-    }
-
-    protected void error(String t) {
-        //errorReporter.record( _Error.create(t, Lexer.getPosition()) );
-    }
 
     /**
      * Parses the assembly file for tokens, creates LineStatements, and adds them to a list.
@@ -139,7 +131,10 @@ public class Parser implements IParser {
             return new LineStatement(null, inst, null);
         }
         else {
-            // If not registered, then label
+            Error e1 = new Error();
+            e1.generatemsg(Error.err_type.INCORRECT, _lexer.getPosition(), _token);
+            errorReporter.record(e1);
+            //If not registered, then label
             // TODO Label processing
         }
 

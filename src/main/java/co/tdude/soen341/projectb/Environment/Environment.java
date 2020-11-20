@@ -3,6 +3,10 @@ package co.tdude.soen341.projectb.Environment;
 import co.tdude.soen341.projectb.Lexer.Lexer;
 import co.tdude.soen341.projectb.Reader.Reader;
 
+import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
+import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
+
+
 import java.io.File;
 
 /**
@@ -25,7 +29,8 @@ public class Environment {
     */
    private Reader reader;
 
-   //TODO : Add field for ErrorReporter
+   private SymbolTable symTable;
+   private ErrorReporter eReporter;
 
    /**
     * Constructor used to create an Environment object
@@ -34,9 +39,11 @@ public class Environment {
    public Environment(File asmFile){
       this.asmFile = asmFile;
       this.reader = new Reader(this.asmFile);
+
+      this.eReporter=new ErrorReporter();
       this.lexer = new Lexer(reader);
 
-      //TODO : Add instantiation of ErrorReporter
+     
    }
 
    /**
@@ -55,9 +62,8 @@ public class Environment {
       return asmFile;
    }
 
-   /* TODO: Introduce getErrorReporter()
    public ErrorReporter getErrorReporter (){
       return eReporter;
    }
-    */
+
 }

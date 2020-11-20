@@ -1,6 +1,8 @@
 package co.tdude.soen341.projectb.test;
 
 import co.tdude.soen341.projectb.Assembler.AssemblyUnit;
+import co.tdude.soen341.projectb.ErrorReporter.Error;
+import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
 import co.tdude.soen341.projectb.ErrorReporter.Position;
 import co.tdude.soen341.projectb.Lexer.Tokens.CommentToken;
 import co.tdude.soen341.projectb.Lexer.Tokens.LabelToken;
@@ -76,5 +78,14 @@ public class AssemblerTest {
         assertEquals(65535, p4.getLine());
         assertEquals(255, p4.getColumn());
     }
+@Test
+    void ErrorTest(){
+        Error e1=new Error("Illegal Token");
+        ErrorReporter er1=new ErrorReporter();
+        er1.record(e1);
 
+        assertEquals("Illegal Token",er1.getErrorLst().get(0).getmsg());
+
+
+}
 }
