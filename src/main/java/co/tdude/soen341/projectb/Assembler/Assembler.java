@@ -14,6 +14,6 @@ public class Assembler {
         Parser assemblyParser = new Parser(environment);
         AssemblyUnit assemblyUnit = assemblyParser.parse();
         assemblyUnit.GenerateListing();
-        environment.getErrorReporter().getErrorLst().toString();
+        System.out.println(environment.getErrorReporter().getErrorLst().toString());//Display Errors in console?
     }
 }

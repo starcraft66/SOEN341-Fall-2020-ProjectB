@@ -5,7 +5,7 @@ import co.tdude.soen341.projectb.Lexer.Tokens.Token;
 public class Error {
 
 
-        String message;
+       private String message;
         public enum err_type{
             INCORRECT,
 
@@ -33,11 +33,13 @@ public class Error {
 
         public void generatemsg (err_type type, String pos, Token probl){
             switch(type){
-                case INCORRECT:
+                case INCORRECT:{
                     new Error("Position: "+pos+"   "+probl.getValue()+" is not a recognized opcode.");
+                    break;}
 
-                default:
+                default:{
                     new Error("Unknown error");
+                    break;}
             }
 
 
