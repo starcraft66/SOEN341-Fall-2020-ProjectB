@@ -11,4 +11,5 @@ public interface ILexer {
      * @return The token.
      */
     Token getToken();
+    String getPosition();
 }

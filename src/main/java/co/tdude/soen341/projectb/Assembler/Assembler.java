@@ -64,10 +64,13 @@ public class Assembler {
         Environment environment = new Environment(asmFile);
         Parser assemblyParser = new Parser(environment, outFilePath);
         AssemblyUnit assemblyUnit = assemblyParser.parse();
+
         if (ns.getBoolean("listing")) {
             Logger.getLogger("").info("Generating listing file");
             assemblyUnit.GenerateListing();
         }
         Logger.getLogger("").info("Assembly parsing done");
+        System.out.println(environment.getErrorReporter().getErrorLst().toString());
     }
+
 }

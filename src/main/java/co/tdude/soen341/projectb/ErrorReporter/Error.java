@@ -1,29 +1,57 @@
 package co.tdude.soen341.projectb.ErrorReporter;
 
-/**
- * Error reporting class used to hold error descriptions and positions within the assembly file.
- */
+import co.tdude.soen341.projectb.Lexer.Tokens.Token;
+
+
 public class Error {
-    String description;
-    Position position;
 
-    /**
-     * Constructor used to create an Error object
-     * @param description: Description of the error
-     * @param position: Line and column of the location
-     */
-    public Error(String description, Position position){
-        this.description = description;
-        this.position = position;
-    }
 
+       private String message;
+        public enum err_type{
+            INCORRECT,
+
+        }
     /**
-     * Creating an error
-     * @param desc: Description of the error
-     * @param pos: Position (line, column) of the error
-     * @return: error object
+     * Constructor of Error
+     * @param msg: error message which will be displayed
+
      */
-    public Error create (String desc, Position pos){
-        return new Error(desc, pos);
-    }
+        public Error(String msg)
+        {
+            this.message=msg;
+
+        }
+        public Error()
+        {
+            this("");
+
+        }
+    /**
+     * Creating an error message
+     * @param type: enum representing the error type
+     * @param pos: position (line, column) of the error
+     * @param probl :token which contains the error
+     */
+
+        public void generatemsg (err_type type, String pos, Token probl){
+            switch(type){
+                case INCORRECT:{
+                    new Error("Position: "+pos+"   "+probl.getValue()+" is not a recognized opcode.");
+                    break;}
+
+                default:{
+                    new Error("Unknown error");
+                    break;}
+            }
+
+
+        }
+public String getmsg(){
+
+            return this.message;
+
 }
+
+
+
+    }
