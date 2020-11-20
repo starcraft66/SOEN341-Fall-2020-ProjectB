@@ -16,6 +16,7 @@ import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * Parses the assembly file and extracts a list of LineStatements.
@@ -42,54 +43,52 @@ public class Parser implements IParser {
     private IReportable errorReporter;
 
     /**
-     *
+     * The list of LineStatements that comprise the AssumblyUnit.
      */
     private ArrayList<LineStatement> _assemblyUnit;
 
     /**
-     * SymbolTable that stores labels and their hex equivalents.
+     * The path to the output binary file (and listing)
      */
-    //private ISymbolTable _labelTable;
-
-    /**
-     * Symbol table that stores opcodes and their hex equivalents.
-     */
-    //private ISymbolTable _keywordTable;
+    private String _outputFilePath;
 
     /**
      * Constructor to instantiate a Parser object.
      * @param env Environment object that supplies the instantiated assembly file, lexer object, and symbol tables.
+     * @param outputFilePath The path for the output file name (and listing with .lst suffix)
      */
-    public Parser(Environment env) {
+    public Parser(Environment env, String outputFilePath) {
         _assemblyUnit = new ArrayList<>();
         _lexer = env.getLexer();
         _sourceFile = env.getSourceFile();
         this.errorReporter = env.getErrorReporter();
         //_labelTable = env.getSymbolTable();
         //_keywordTable = env.getSymbolTable();
+        _outputFilePath = outputFilePath;
 
-        nextToken(); // prime
-        // address = 0; Don't know what this is for
+        nextToken();
     }
 
 
+
     /**
-     *
-     * @return
+     * Parses the assembly file for tokens, creates LineStatements, and adds them to a list.
+     * @return The assembly unit that is comprised of all the LineStatements.
      */
     public AssemblyUnit parse() {
-        System.out.println("Parsing an Assembler...");
+        Logger.getLogger("").fine("Parsing an Assembler...");
 
         while (_token.getType() != TokenType.EOF) {
             _assemblyUnit.add(parseLineStmt());
             nextToken();
         }
 
-        return new AssemblyUnit(_assemblyUnit);
+        return new AssemblyUnit(_assemblyUnit, _outputFilePath);
     }
 
-    //---------------------------------------------------------------------------------
-    // Parse a 1 Byte no Operand Mnemonic
+    /**
+     * Parse a 1 Byte no Operand Mnemonic
+     */
     private Instruction parseInherent() {
         return new Instruction(_token.getValue(), null);
     }
@@ -104,20 +103,16 @@ public class Parser implements IParser {
 //        // your code...
 //    } TODO: Sprint 2
 
-    // -------------------------------------------------------------------
-    // A line statement:
-    //   - could be empty (only a EOL);
-    //   - could have a single comment start at BOL or after a label, label/inst, or label/dir;
-    //   - could have a label only, etc.
-    //
-    // LineStatement = [Label] [Instruction | Directive ] [Comment] EOL .
-    //
+    /**
+     * Creates a LineStatement object depending on the type of token being parsed.
+     * @return A new LineStatement object.
+     */
     private LineStatement parseLineStmt() {
         LabelToken   label = null;
         Instruction  inst = null;
         CommentToken comment = null;
 
-        System.out.println("Parsing a Line Statement...");
+        Logger.getLogger("").fine("Parsing a Line Statement...");
 
         // Test if EOL first
         if (_token.getType() == TokenType.EOL) {
