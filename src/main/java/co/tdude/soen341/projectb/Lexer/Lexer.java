@@ -132,10 +132,9 @@ public class Lexer implements ILexer {
 
         _curColPos++;
 
-        try {
+        if (SymbolTable.isMnemonicRegistered(_lexeme)) {
             return new MnemonicToken(_lexeme);
-        }
-        catch (ValueNotExist e) {
+        } else {
             return new IdentifierToken(_lexeme);
         }
     }
