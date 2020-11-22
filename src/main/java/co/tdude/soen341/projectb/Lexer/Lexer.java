@@ -99,7 +99,7 @@ public class Lexer implements ILexer {
      */
 
     /**
-     *
+     * Scans and returns an integer (No negative numbers allowed)
      * @return
      */
     private Token scanNumber() {
@@ -206,7 +206,6 @@ public class Lexer implements ILexer {
 //                case '.':  /* dot for directives as a first character */
 //                    return scanDirective(); TODO: SPRINT 2
 
-            case '-':
             case '0': case '1': case '2': case '3': case '4':
             case '5': case '6': case '7': case '8': case '9':
                 return scanNumber();
