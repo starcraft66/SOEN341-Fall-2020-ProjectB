@@ -4,18 +4,43 @@ import co.tdude.soen341.projectb.Assembler.AssemblyUnit;
 import co.tdude.soen341.projectb.ErrorReporter.Error;
 import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
 import co.tdude.soen341.projectb.ErrorReporter.Position;
-import co.tdude.soen341.projectb.Lexer.Tokens.CommentToken;
-import co.tdude.soen341.projectb.Lexer.Tokens.LabelToken;
+import co.tdude.soen341.projectb.Lexer.Lexer;
+import co.tdude.soen341.projectb.Lexer.Tokens.*;
 import co.tdude.soen341.projectb.Node.Instruction;
 import co.tdude.soen341.projectb.Node.LineStatement;
+import co.tdude.soen341.projectb.Reader.Reader;
 import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AssemblerTest {
+
+    static File testfile;
+    static FileWriter fw;
+
+    @BeforeAll
+    static void SetupTestFile(/*@TempDir File tempDir*/) throws IOException {
+        testfile = File.createTempFile("testfile", ".txt");
+        testfile.deleteOnExit();
+        fw = new FileWriter(testfile);
+    }
+
+    @BeforeEach
+    void EraseTestFile() throws IOException {
+        fw.close();
+        fw = new FileWriter(testfile); // Wipes contents of testfile every time
+    }
+
+    @AfterAll
+    static void Cleanup() throws IOException {
+        fw.close();
+    }
 
     @Test
     void AssemblyUnitTest() {
@@ -85,7 +110,46 @@ public class AssemblerTest {
         er1.record(e1);
 
         assertEquals("Illegal Token",er1.getErrorLst().get(0).getmsg());
+    }
 
 
-}
+    @Test
+    void NumberParsedCorrectly() throws IOException {
+        fw.write("1234");
+        fw.flush();
+        Reader r = new Reader(testfile);
+        Lexer l = new Lexer(r);
+        Token t = l.getToken();
+        assertEquals(t.getClass(), NumberToken.class);
+        NumberToken nt = (NumberToken) t;
+        assertEquals(nt.getType(), TokenType.NUMBER);
+        assertEquals(nt.getNumber(), 1234);
+        assertEquals(l.getToken().getType(), TokenType.EOF);
+    }
+
+    @Test
+    void MnemonicParsedCorrectly() throws IOException {
+        fw.write("add");
+        fw.flush();
+        Reader r = new Reader(testfile);
+        Lexer l = new Lexer(r);
+        Token t = l.getToken();
+        assertEquals(t.getClass(), MnemonicToken.class);
+        MnemonicToken nt = (MnemonicToken) t;
+        assertEquals(nt.getType(), TokenType.MNEMONIC);
+        assertEquals(nt.getValue(), "add");
+        assertEquals(l.getToken().getType(), TokenType.EOF);
+    }
+
+    @Test
+    void MultiLineMnemonics() throws IOException {
+        fw.write("add\nsub");
+        fw.flush();
+        Reader r = new Reader(testfile);
+        Lexer l = new Lexer(r);
+        assertEquals(l.getToken().getType(), TokenType.MNEMONIC);
+        assertEquals(l.getToken().getType(), TokenType.EOL);
+        assertEquals(l.getToken().getType(), TokenType.MNEMONIC);
+        assertEquals(l.getToken().getType(), TokenType.EOF);
+    }
 }
