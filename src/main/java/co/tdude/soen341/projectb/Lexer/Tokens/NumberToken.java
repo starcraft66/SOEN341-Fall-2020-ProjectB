@@ -18,4 +18,8 @@ public class NumberToken extends Token {
         // Should be guaranteed that getValue will return a valid int in the number subclass
         number = Integer.parseInt(getValue());
     }
+
+    public int getNumber() {
+        return number;
+    }
 }
