@@ -40,6 +40,11 @@ public class Reader implements IReader {
         bfReader.close();
     }
 
+    /**
+     * Verifies if the next char is an EOF character
+     * @param nextChar: The next character
+     * @return: true if EOF, false if not
+     */
     private boolean isEOFchar(int nextChar){
         return (nextChar == -1);
     }

@@ -7,7 +7,8 @@ public class Error {
 
 
        private String message;
-        public enum err_type{
+
+    public enum err_type{
             INCORRECT,
 
         }
@@ -32,7 +33,6 @@ public class Error {
      * @param pos: position (line, column) of the error
      * @param probl :token which contains the error
      */
-
         public void generatemsg (err_type type, String pos, Token probl){
             switch(type){
                 case INCORRECT:{
@@ -46,7 +46,12 @@ public class Error {
 
 
         }
-public String getmsg(){
+
+    /**
+     * Returns the message associated with that error
+     * @return: The message
+     */
+    public String getmsg(){
 
             return this.message;
 
