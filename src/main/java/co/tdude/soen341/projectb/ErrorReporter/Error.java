@@ -5,7 +5,12 @@ import co.tdude.soen341.projectb.Lexer.Tokens.Token;
 
 public class Error {
 
-
+    /**
+     * Constructor of Error
+     * @param message: error message to be displayed
+     *
+     */
+    //enum is used to choose the error type for which a message will be printed
        private String message;
         public enum err_type{
             INCORRECT,
@@ -46,7 +51,12 @@ public class Error {
 
 
         }
-public String getmsg(){
+
+    /**
+     * Returns the message associated with that error
+     * @return: The message
+     */
+    public String getmsg(){
 
             return this.message;
 
