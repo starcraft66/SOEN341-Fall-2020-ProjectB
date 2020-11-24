@@ -105,6 +105,7 @@ public class Lexer implements ILexer {
      */
     private Token scanNumber() {
         while (!Character.isWhitespace(_ch) && _ch != '\0') {
+            _curColPos++;
             _lexeme += _ch;
             _ch = read();
         }
