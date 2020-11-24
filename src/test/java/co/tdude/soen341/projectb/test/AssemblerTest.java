@@ -25,7 +25,7 @@ public class AssemblerTest {
     static FileWriter fw;
 
     @BeforeAll
-    static void SetupTestFile(/*@TempDir File tempDir*/) throws IOException {
+    static void SetupTestFile() throws IOException {
         testfile = File.createTempFile("testfile", ".txt");
         testfile.deleteOnExit();
         fw = new FileWriter(testfile);

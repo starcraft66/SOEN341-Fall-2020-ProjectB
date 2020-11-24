@@ -19,6 +19,10 @@ public class NumberToken extends Token {
         number = Integer.parseInt(getValue());
     }
 
+    /**
+     * Accessor for the number field
+     * @return the integer held in the number field
+     */
     public int getNumber() {
         return number;
     }
