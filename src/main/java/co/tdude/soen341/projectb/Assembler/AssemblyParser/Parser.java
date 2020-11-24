@@ -93,7 +93,7 @@ public class Parser implements IParser {
         return new Instruction(_token.getValue(), null);
     }
 
-    private Instruction parseImmediate() {
+    /*private Instruction parseImmediate() {
         if(_token.getType() == TokenType.EOL){
 
         }
@@ -103,7 +103,7 @@ public class Parser implements IParser {
 
             }
         }
-    }
+    }*/
 
     //---------------------------------------------------------------------------------
 //    private Instruction parseRelative() {
