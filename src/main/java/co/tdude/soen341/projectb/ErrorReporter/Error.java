@@ -5,10 +5,14 @@ import co.tdude.soen341.projectb.Lexer.Tokens.Token;
 
 public class Error {
 
-
+    /**
+     * Constructor of Error
+     * @param message: error message to be displayed
+     *
+     */
+    //enum is used to choose the error type for which a message will be printed
        private String message;
-
-    public enum err_type{
+        public enum err_type{
             INCORRECT,
 
         }
@@ -33,6 +37,7 @@ public class Error {
      * @param pos: position (line, column) of the error
      * @param probl :token which contains the error
      */
+
         public void generatemsg (err_type type, String pos, Token probl){
             switch(type){
                 case INCORRECT:{
