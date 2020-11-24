@@ -110,10 +110,11 @@ public class Lexer implements ILexer {
         }
         try {
             Integer.parseInt(_lexeme);
+            return new NumberToken(_lexeme);
         } catch (NumberFormatException e) {
             LexerError(e.getMessage());
+            return new IllegalToken();
         }
-        return new NumberToken(_lexeme);
     }
 
     /**
@@ -208,6 +209,7 @@ public class Lexer implements ILexer {
 //                case '.':  /* dot for directives as a first character */
 //                    return scanDirective(); TODO: SPRINT 2
 
+            case '-':
             case '0': case '1': case '2': case '3': case '4':
             case '5': case '6': case '7': case '8': case '9':
                 return scanNumber();
