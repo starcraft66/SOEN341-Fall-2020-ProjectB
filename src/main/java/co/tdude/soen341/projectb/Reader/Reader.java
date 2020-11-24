@@ -17,7 +17,7 @@ public class Reader implements IReader {
     @Override
     public char read() throws IOException {
         int nextChar = bfReader.read();
-        return (nextChar == -1) ? '\0' : (char) nextChar;
+        return isEOFchar(nextChar) ? '\0' : (char) nextChar;
     }
 
     /**
@@ -38,5 +38,9 @@ public class Reader implements IReader {
      */
     public void closeReader () throws IOException {
         bfReader.close();
+    }
+
+    private boolean isEOFchar(int nextChar){
+        return (nextChar == -1);
     }
 }
