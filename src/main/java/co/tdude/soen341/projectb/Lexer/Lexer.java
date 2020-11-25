@@ -126,7 +126,7 @@ public class Lexer implements ILexer {
         while (!Character.isWhitespace(_ch) && _ch != '\0') {
             _curColPos++;
             _lexeme += _ch;
-            if (!(Character.isAlphabetic(_ch) || Character.isDigit(_ch))) {
+            if (!(Character.isAlphabetic(_ch) || Character.isDigit(_ch) || _ch == '.')) {
                 LexerError("Position: "+ getPosition()+" The Identifier had a non-ident character in it");
             }
             else {

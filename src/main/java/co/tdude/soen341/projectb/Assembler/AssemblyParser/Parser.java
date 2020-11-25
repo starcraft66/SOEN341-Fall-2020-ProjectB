@@ -93,10 +93,17 @@ public class Parser implements IParser {
         return new Instruction(_token.getValue(), null);
     }
 
-    //---------------------------------------------------------------------------------
-//    private Instruction parseImmediate() {
-//        // your code...
-//    } TODO: Sprint 2
+    /*private Instruction parseImmediate() {
+        if(_token.getType() == TokenType.EOL){
+
+        }
+        if (_token.getType() == TokenType.MNEMONIC){
+            // I would need to be able to 'see' the next token  if order to be able to create a whole Instruction instance
+            if (_token.getType() == TokenType.NUMBER){
+
+            }
+        }
+    }*/
 
     //---------------------------------------------------------------------------------
 //    private Instruction parseRelative() {
