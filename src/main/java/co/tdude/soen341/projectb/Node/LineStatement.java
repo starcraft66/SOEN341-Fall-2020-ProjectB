@@ -40,4 +40,18 @@ public class LineStatement extends Node {
     public Instruction getInst() {
         return inst;
     }
+
+    public String toString() {
+        String out = "";
+        if (label != null) {
+            out += label.getValue() + ": ";
+        }
+        if (inst != null) {
+            out += inst.get_mnemonic() + " " + inst.get_operand();
+        }
+        if (comment != null) {
+            out += " ;" + comment.getValue();
+        }
+        return out;
+    }
 }

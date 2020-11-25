@@ -68,12 +68,13 @@ public class Assembler {
         Parser assemblyParser = new Parser(environment, listingFilePath, binaryFilePath);
         AssemblyUnit assemblyUnit = assemblyParser.parse();
 
+        Logger.getLogger("").info("Generating executable file");
         if (ns.getBoolean("listing")) {
             Logger.getLogger("").info("Generating listing file");
-            Logger.getLogger("").info("Generating executable file");
-            //TODO: print the listing to console in addition to generating the listing file
-            assemblyUnit.Assemble();
-            //TODO: generate binary executable file.
+            assemblyUnit.Assemble(true);
+        } else {
+            // Otherwise, just assemble it to exe with no listing
+            assemblyUnit.Assemble(false);
         }
         Logger.getLogger("").info("Assembly parsing done");
         System.out.println(environment.getErrorReporter().getErrorLst().toString());
