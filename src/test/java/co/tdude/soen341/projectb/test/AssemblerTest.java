@@ -28,17 +28,15 @@ public class AssemblerTest {
     static void SetupTestFile() throws IOException {
         testfile = File.createTempFile("testfile", ".txt");
         testfile.deleteOnExit();
-        fw = new FileWriter(testfile);
     }
 
     @BeforeEach
-    void EraseTestFile() throws IOException {
-        fw.close();
+    void OverwriteTestFile() throws IOException {
         fw = new FileWriter(testfile); // Wipes contents of testfile every time
     }
 
-    @AfterAll
-    static void Cleanup() throws IOException {
+    @AfterEach
+    void CloseTestFile() throws IOException {
         fw.close();
     }
 
