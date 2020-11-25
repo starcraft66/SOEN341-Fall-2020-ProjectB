@@ -239,7 +239,10 @@ public class AssemblyUnit {
         writer.write(String.format("%-15s%-15s%-15s\n","Line", "Hex Code", "Assembly Code"));
     }
 
+    /**
+     * Print a header to console
+     */
     private void PrintHeader() {
-        System.out.println(String.format("%-15s%-15s%-15s\n","Line", "Hex Code", "Assembly Code"));
+        System.out.printf("%-15s%-15s%-15s\n%n","Line", "Hex Code", "Assembly Code");
     }
 }

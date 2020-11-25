@@ -47,7 +47,10 @@ public class LineStatement extends Node {
             out += label.getValue() + ": ";
         }
         if (inst != null) {
-            out += inst.get_mnemonic() + " " + inst.get_operand();
+            out += inst.get_mnemonic();
+            if (inst.get_operand() != null) {
+                out += " " + inst.get_operand();
+            }
         }
         if (comment != null) {
             out += " ;" + comment.getValue();
