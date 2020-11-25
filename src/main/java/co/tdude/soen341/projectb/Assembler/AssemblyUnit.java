@@ -46,8 +46,32 @@ public class AssemblyUnit {
      * @throws IOException
      */
     public void Assemble() throws IOException {
+        PrintListingFile();
         GenerateListingFile();
         GenerateBinaryFile();
+    }
+
+    private void PrintListingFile() {
+        int lineCount = 1;
+
+        PrintHeader();
+
+        for(LineStatement lineStatement: _assemblyUnit) {
+            Instruction mnemonic = lineStatement.getInst();
+
+            if (mnemonic == null) {
+                //TODO: eventually going to have to fix this and delete all the empty line statements from the assembly unit object
+                continue;
+            }
+            else {
+                int value = SymbolTable.getMnemonic(mnemonic.toString());
+                String hex = Integer.toHexString(value);
+
+                System.out.println((String.format("%-15s%-15s%-15s\n", lineCount, hex, lineStatement.getInst())));
+
+                ++lineCount;
+            }
+        }
     }
 
     private void GenerateListingFile() throws IOException {
@@ -119,5 +143,7 @@ public class AssemblyUnit {
         writer.write(String.format("%-15s%-15s%-15s\n","Line", "Obj", "Source"));
     }
 
-
+    private void PrintHeader() {
+        System.out.println(String.format("%-15s%-15s%-15s\n","Line", "Obj", "Source"));
+    }
 }
