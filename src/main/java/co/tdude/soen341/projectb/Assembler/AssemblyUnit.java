@@ -1,7 +1,5 @@
 package co.tdude.soen341.projectb.Assembler;
 
-import co.tdude.soen341.projectb.Lexer.Tokens.NumberToken;
-import co.tdude.soen341.projectb.Node.Instruction;
 import co.tdude.soen341.projectb.Node.LineStatement;
 import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 
@@ -136,91 +134,6 @@ public class AssemblyUnit {
 
         return writer;
     }
-
-//    private void PrintListingFile() {
-//        int lineCount = 1;
-//
-//        PrintHeader();
-//
-//        for(LineStatement lineStatement: _assemblyUnit) {
-//            Instruction instruction = lineStatement.getInst();
-//
-//            if (instruction == null) {
-//                //TODO: eventually going to have to fix this and delete all the empty line statements from the assembly unit object
-//                continue;
-//            }
-//            else {
-//                String mnemonic = instruction.get_mnemonic();
-//                String opcode = instruction.get_operand();
-//
-//                int instructionValue = SymbolTable.getMnemonic(instruction.get_mnemonic());
-//                if (opcode != null) {
-//                    // For now, this should not fail because no relative instructions
-//                    // TODO: In sprint 3, adjust this to accept idents as well
-//                    instructionValue += Integer.parseInt(opcode);
-//                }
-//                // For the listing file
-//                String instructionHex = Integer.toHexString(instructionValue);
-//
-//                System.out.printf("%-15s%-15s\n%n", lineCount, instructionHex);
-//
-//                ++lineCount;
-//            }
-//        }
-//    }
-
-//    private void GenerateListingFile() throws IOException {
-//        int lineCount = 1;
-//
-//        for(LineStatement lineStatement: _assemblyUnit) {
-//            Instruction instruction = lineStatement.getInst();
-//
-//            if (instruction == null) {
-//                //TODO: eventually going to have to fix this and delete all the empty line statements from the assembly unit object
-//                continue;
-//            }
-//            else {
-//                String mnemonic = instruction.get_mnemonic();
-//                String opcode = instruction.get_operand();
-//
-//                int mnemonicValue = SymbolTable.getMnemonic(instruction.get_mnemonic());
-//                String mnemonicHex = Integer.toHexString(mnemonicValue);
-//
-//                if (opcode == null) {
-//                    writer.write(String.format("%-15s%-15s%-15s\n", lineCount, mnemonicHex, mnemonic));
-//                }
-//                else {
-//                    writer.write(String.format("%-15s%-15s%-15s\n", lineCount, mnemonicHex, mnemonic + " " + opcode));
-//                }
-//
-//                ++lineCount;
-//            }
-//        }
-//
-//    }
-
-//    private void GenerateBinaryFile() throws IOException {
-//        String fileName = _binaryFilePath + ".exe";
-//        File dstFile = new File(fileName);
-//
-//        FileWriter writer = new FileWriter(dstFile);
-//
-//        for(LineStatement lineStatement: _assemblyUnit) {
-//            Instruction instruction = lineStatement.getInst();
-//
-//            if (instruction == null) {
-//                //TODO: eventually going to have to fix this and delete all the empty line statements from the assembly unit object
-//                continue;
-//            }
-//            else {
-//                int mnemonicValue = SymbolTable.getMnemonic(instruction.get_mnemonic());
-//
-//                writer.write(String.format("%8s", Integer.toBinaryString(mnemonicValue) + '\n').replace(' ', '0'));
-//            }
-//        }
-//
-//        writer.close();
-//    }
 
     /**
      * Gets the list of LineStatement objects.

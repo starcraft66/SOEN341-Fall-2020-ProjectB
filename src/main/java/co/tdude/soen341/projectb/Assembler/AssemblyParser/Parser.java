@@ -1,6 +1,7 @@
 package co.tdude.soen341.projectb.Assembler.AssemblyParser;
 
 import co.tdude.soen341.projectb.Assembler.AssemblyUnit;
+import co.tdude.soen341.projectb.Assembler.SourceFile;
 import co.tdude.soen341.projectb.Environment.Environment;
 import co.tdude.soen341.projectb.ErrorReporter.Error;
 import co.tdude.soen341.projectb.ErrorReporter.IReportable;
@@ -37,7 +38,7 @@ public class Parser implements IParser {
     private File _sourceFile;
 
     /**
-     *
+     * Used to log error reports when parsing errors occur.
      */
     private IReportable errorReporter;
 
@@ -79,17 +80,15 @@ public class Parser implements IParser {
     /**
      * Constructor to instantiate a Parser object.
      * @param env Environment object that supplies the instantiated assembly file, lexer object, and symbol tables.
-     * @param listingFilePath The path for the output file name (and listing with .lst suffix)
+     * //@param listingFilePath The path for the output file name (and listing with .lst suffix)
      */
-    public Parser(Environment env, String listingFilePath, String binaryFilePath) {
+    public Parser(Environment env) {
         _assemblyUnit = new ArrayList<>();
         _lexer = env.getLexer();
         _sourceFile = env.getSourceFile();
         this.errorReporter = env.getErrorReporter();
-        //_labelTable = env.getSymbolTable();
-        //_keywordTable = env.getSymbolTable();
-        _listingFilePath = listingFilePath;
-        _binaryFilePath = binaryFilePath;
+        _listingFilePath = SourceFile.getName();
+        _binaryFilePath = SourceFile.getName();
 
         nextToken();
     }

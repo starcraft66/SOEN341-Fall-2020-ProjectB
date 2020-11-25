@@ -14,6 +14,9 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Assembles an assembly file and generates corresponding binary and listing files.
+ */
 public class Assembler {
     public static void main(String[] args) throws IOException {
         ArgumentParser parser = ArgumentParsers.newFor("assembler").build()
@@ -22,14 +25,6 @@ public class Assembler {
         parser.addArgument("asmfile").nargs("?")
                 .help("Path to the source assembly file")
                 .setDefault("asmTestFile.asm")
-                .type(String.class);
-        parser.addArgument("listingfile").nargs("?")
-                .help("Path to the listing file")
-                .setDefault("listingFile")
-                .type(String.class);
-        parser.addArgument("executablefile").nargs("?")
-                .help("Path to the binary executable file")
-                .setDefault("executablefile")
                 .type(String.class);
         parser.addArgument("-l", "--listing")
                 .help("Output a listing file")
@@ -60,12 +55,10 @@ public class Assembler {
         }
         Logger.getLogger("").info("Starting assembly parsing");
         String asmFilePath = ns.getString("asmfile");
-        String listingFilePath = ns.getString("listingfile");
-        String binaryFilePath = ns.getString("executablefile");
         File asmFile = new File(asmFilePath);
         SourceFile.StoreAssemblyFile(asmFile);
         Environment environment = new Environment(asmFile);
-        Parser assemblyParser = new Parser(environment, listingFilePath, binaryFilePath);
+        Parser assemblyParser = new Parser(environment);
         AssemblyUnit assemblyUnit = assemblyParser.parse();
 
         Logger.getLogger("").info("Generating executable file");
