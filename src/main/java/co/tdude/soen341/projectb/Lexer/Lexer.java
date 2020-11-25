@@ -57,6 +57,7 @@ public class Lexer implements ILexer {
         _reader = reader;
         _curLinePos = 1;
         _curColPos = 0;
+        read(); // Prime the first character;
     }
 
     /**
@@ -99,20 +100,22 @@ public class Lexer implements ILexer {
      */
 
     /**
-     *
+     * Scans and returns an integer (No negative numbers allowed)
      * @return
      */
     private Token scanNumber() {
         while (!Character.isWhitespace(_ch) && _ch != '\0') {
+            _curColPos++;
             _lexeme += _ch;
             _ch = read();
         }
         try {
             Integer.parseInt(_lexeme);
+            return new NumberToken(_lexeme);
         } catch (NumberFormatException e) {
             LexerError(e.getMessage());
+            return new IllegalToken();
         }
-        return new NumberToken(_lexeme);
     }
 
     /**
@@ -121,8 +124,9 @@ public class Lexer implements ILexer {
      */
     private Token scanIdentifier() {
         while (!Character.isWhitespace(_ch) && _ch != '\0') {
+            _curColPos++;
             _lexeme += _ch;
-            if (!(Character.isAlphabetic(_ch) || Character.isDigit(_ch))) {
+            if (!(Character.isAlphabetic(_ch) || Character.isDigit(_ch) || _ch == '.')) {
                 LexerError("Position: "+ getPosition()+" The Identifier had a non-ident character in it");
             }
             else {
@@ -130,12 +134,9 @@ public class Lexer implements ILexer {
             }
         }
 
-        _curColPos++;
-
-        try {
+        if (SymbolTable.isMnemonicRegistered(_lexeme)) {
             return new MnemonicToken(_lexeme);
-        }
-        catch (ValueNotExist e) {
+        } else {
             return new IdentifierToken(_lexeme);
         }
     }
@@ -163,14 +164,15 @@ public class Lexer implements ILexer {
     public Token getToken() {
         _lexeme = "";
 
-        _ch = read();
+        //_ch = read(); This was removed because it advanced past the End of Word. It is the responsibility of the
+        // various scanX() functions to read() until their word is done
 
         // Mark position (after skipping blanks)
         //curlinePos = linePos;
         //curcolPos = colPos;
 
         // skip whitespaces
-        while (Character.isWhitespace(_ch) && _ch != '\n' && _ch != '\r' && _ch != '\0') {
+        while (_ch == ' ' || _ch == '\t') {
             _ch = read();
         }
 
@@ -188,6 +190,7 @@ public class Lexer implements ILexer {
                 // I think this works to carriage return on to the next line of source
                 _curColPos = 1;
                 _curLinePos++;
+                read(); // Prime the next line
                 return new EOLToken();
 
             case 'a': case 'b': case 'c': case 'd': case 'e':
@@ -219,8 +222,8 @@ public class Lexer implements ILexer {
 //                    return scanString(); // TODO: STRING STUFF
 
             default:
-                read();
                 LexerError("Position:"+getPosition()+" Illegal Token Detected");
+                read();
                 return new IllegalToken();
         }
     }

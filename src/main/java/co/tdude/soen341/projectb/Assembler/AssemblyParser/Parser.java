@@ -3,7 +3,6 @@ package co.tdude.soen341.projectb.Assembler.AssemblyParser;
 import co.tdude.soen341.projectb.Assembler.AssemblyUnit;
 import co.tdude.soen341.projectb.Environment.Environment;
 import co.tdude.soen341.projectb.ErrorReporter.Error;
-import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
 import co.tdude.soen341.projectb.ErrorReporter.IReportable;
 import co.tdude.soen341.projectb.Lexer.ILexer;
 import co.tdude.soen341.projectb.Lexer.Tokens.CommentToken;
@@ -48,23 +47,29 @@ public class Parser implements IParser {
     private ArrayList<LineStatement> _assemblyUnit;
 
     /**
-     * The path to the output binary file (and listing)
+     * The path to the output listing file
      */
-    private String _outputFilePath;
+    private String _listingFilePath;
+
+    /**
+     * The path to the output binary file
+     */
+    private final String _binaryFilePath;
 
     /**
      * Constructor to instantiate a Parser object.
      * @param env Environment object that supplies the instantiated assembly file, lexer object, and symbol tables.
-     * @param outputFilePath The path for the output file name (and listing with .lst suffix)
+     * @param listingFilePath The path for the output file name (and listing with .lst suffix)
      */
-    public Parser(Environment env, String outputFilePath) {
+    public Parser(Environment env, String listingFilePath, String binaryFilePath) {
         _assemblyUnit = new ArrayList<>();
         _lexer = env.getLexer();
         _sourceFile = env.getSourceFile();
         this.errorReporter = env.getErrorReporter();
         //_labelTable = env.getSymbolTable();
         //_keywordTable = env.getSymbolTable();
-        _outputFilePath = outputFilePath;
+        _listingFilePath = listingFilePath;
+        _binaryFilePath = binaryFilePath;
 
         nextToken();
     }
@@ -83,7 +88,7 @@ public class Parser implements IParser {
             nextToken();
         }
 
-        return new AssemblyUnit(_assemblyUnit, _outputFilePath);
+        return new AssemblyUnit(_assemblyUnit, _listingFilePath, _binaryFilePath);
     }
 
     /**
@@ -93,10 +98,17 @@ public class Parser implements IParser {
         return new Instruction(_token.getValue(), null);
     }
 
-    //---------------------------------------------------------------------------------
-//    private Instruction parseImmediate() {
-//        // your code...
-//    } TODO: Sprint 2
+    /*private Instruction parseImmediate() {
+        if(_token.getType() == TokenType.EOL){
+
+        }
+        if (_token.getType() == TokenType.MNEMONIC){
+            // I would need to be able to 'see' the next token  if order to be able to create a whole Instruction instance
+            if (_token.getType() == TokenType.NUMBER){
+
+            }
+        }
+    }*/
 
     //---------------------------------------------------------------------------------
 //    private Instruction parseRelative() {

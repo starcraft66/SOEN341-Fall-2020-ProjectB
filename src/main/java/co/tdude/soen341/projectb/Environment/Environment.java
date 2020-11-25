@@ -37,13 +37,14 @@ public class Environment {
     * @param asmFile Assembly source file
     */
    public Environment(File asmFile){
+      toolsAndFiles_init(asmFile);
+   }
+
+   private void toolsAndFiles_init(File asmFile) {
       this.asmFile = asmFile;
       this.reader = new Reader(this.asmFile);
-
       this.eReporter=new ErrorReporter();
       this.lexer = new Lexer(reader);
-
-     
    }
 
    /**
