@@ -51,7 +51,7 @@ public class AssemblerTest {
         statements.add(l1);
         statements.add(l2);
         statements.add(l3);
-        AssemblyUnit intermediateRepresentation = new AssemblyUnit(statements, "");
+        AssemblyUnit intermediateRepresentation = new AssemblyUnit(statements, "", "");
 
         assertEquals(l1, intermediateRepresentation.getAssemblyUnit().get(0));
         assertEquals(l2, intermediateRepresentation.getAssemblyUnit().get(1));

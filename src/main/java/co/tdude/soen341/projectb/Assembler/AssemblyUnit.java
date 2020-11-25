@@ -18,26 +18,41 @@ public class AssemblyUnit {
      * List of LineStatement objects.
      */
     private ArrayList<LineStatement> _assemblyUnit;
-    private String _outputFilePath;
+
+    /**
+     * The path to the output listing file
+     */
+    private String _listingFilePath;
+
+    /**
+     * The path to the output binary file
+     */
+    private String _binaryFilePath;
 
     /**
      * Constructor used to instantiate an AssemblyUnit object.
      * @param assemblyUnit The list of LineStatement objects that models the Assembly Unit.
-     * @param outputFilePath The path for the output file name  
+     * @param listingFilePath The path for the listing file
+     * @param binaryFilePath The path for the binary file
      */
-    public AssemblyUnit(ArrayList<LineStatement> assemblyUnit, String outputFilePath) {
+    public AssemblyUnit(ArrayList<LineStatement> assemblyUnit, String listingFilePath, String binaryFilePath) {
         _assemblyUnit = assemblyUnit;
-        _outputFilePath = outputFilePath;
+        _listingFilePath = listingFilePath;
+        _binaryFilePath = binaryFilePath;
     }
 
     /**
      * Generate a listing file in the user's home directory.
      * @throws IOException
      */
-    public void GenerateListing() throws IOException {
+    public void Assemble() throws IOException {
+        GenerateListingFile();
+        GenerateBinaryFile();
+    }
 
+    private void GenerateListingFile() throws IOException {
         int lineCount = 1;
-        String fileName = _outputFilePath + ".lst";
+        String fileName = _listingFilePath + ".lst";
         File dstFile = new File(fileName);
 
         FileWriter writer = new FileWriter(dstFile);
@@ -48,22 +63,39 @@ public class AssemblyUnit {
             Instruction mnemonic = lineStatement.getInst();
 
             if (mnemonic == null) {
+                //TODO: eventually going to have to fix this and delete all the empty line statements from the assembly unit object
                 continue;
             }
             else {
                 int value = SymbolTable.getMnemonic(mnemonic.toString());
                 String hex = Integer.toHexString(value);
 
-                if (hex.length() == 1 && String.valueOf(lineCount).length() == 1) {
-                    writer.write( hex + "          " + lineCount + "      " + lineStatement.getInst() + "\n");
-                }
-                else if (hex.length() == 1 && String.valueOf(lineCount).length() == 2) {
-                    writer.write( hex + "          " + lineCount + "     " + lineStatement.getInst() + "\n");
-                }
-                else {
-                    writer.write(hex + "         " + lineCount + "     " + lineStatement.getInst() + "\n");
-                }
+                writer.write(String.format("%-15s%-15s%-15s\n", lineCount, hex, lineStatement.getInst()));;
+
                 ++lineCount;
+            }
+        }
+
+        writer.close();
+    }
+
+    private void GenerateBinaryFile() throws IOException {
+        String fileName = _binaryFilePath + ".exe";
+        File dstFile = new File(fileName);
+
+        FileWriter writer = new FileWriter(dstFile);
+
+        for(LineStatement lineStatement: _assemblyUnit) {
+            Instruction mnemonic = lineStatement.getInst();
+
+            if (mnemonic == null) {
+                //TODO: eventually going to have to fix this and delete all the empty line statements from the assembly unit object
+                continue;
+            }
+            else {
+                int value = SymbolTable.getMnemonic(mnemonic.toString());
+
+                writer.write(String.format("%8s", Integer.toBinaryString(value) + '\n').replace(' ', '0'));
             }
         }
 
@@ -84,7 +116,7 @@ public class AssemblyUnit {
      * @throws IOException
      */
     private void WriteHeader(FileWriter writer) throws IOException {
-        writer.write("OBJ       " + "LINE   " + "SOURCE\n");
+        writer.write(String.format("%-15s%-15s%-15s\n","Line", "Obj", "Source"));
     }
 
 

@@ -23,9 +23,13 @@ public class Assembler {
                 .help("Path to the source assembly file")
                 .setDefault("asmTestFile.asm")
                 .type(String.class);
-        parser.addArgument("outfile").nargs("?")
-                .help("Path to the output file")
-                .setDefault("asmTestFile")
+        parser.addArgument("listingfile").nargs("?")
+                .help("Path to the listing file")
+                .setDefault("listingFile")
+                .type(String.class);
+        parser.addArgument("executablefile").nargs("?")
+                .help("Path to the binary executable file")
+                .setDefault("executablefile")
                 .type(String.class);
         parser.addArgument("-l", "--listing")
                 .help("Output a listing file")
@@ -56,16 +60,20 @@ public class Assembler {
         }
         Logger.getLogger("").info("Starting assembly parsing");
         String asmFilePath = ns.getString("asmfile");
-        String outFilePath = ns.getString("outfile");
+        String listingFilePath = ns.getString("listingfile");
+        String binaryFilePath = ns.getString("executablefile");
         File asmFile = new File(asmFilePath);
         SourceFile.StoreAssemblyFile(asmFile);
         Environment environment = new Environment(asmFile);
-        Parser assemblyParser = new Parser(environment, outFilePath);
+        Parser assemblyParser = new Parser(environment, listingFilePath, binaryFilePath);
         AssemblyUnit assemblyUnit = assemblyParser.parse();
 
         if (ns.getBoolean("listing")) {
             Logger.getLogger("").info("Generating listing file");
-            assemblyUnit.GenerateListing();
+            Logger.getLogger("").info("Generating executable file");
+            //TODO: print the listing to console in addition to generating the listing file
+            assemblyUnit.Assemble();
+            //TODO: generate binary executable file.
         }
         Logger.getLogger("").info("Assembly parsing done");
         System.out.println(environment.getErrorReporter().getErrorLst().toString());
