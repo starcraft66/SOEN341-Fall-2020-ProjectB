@@ -2,15 +2,17 @@
  pop
  dup
  exit
+ ldv.u3 4
  ret
  not
  and
  or 
+ br.i5 10
  xor
  neg
  inc
  dec
- add
+ addv.u3 2
  sub
  mul
  div

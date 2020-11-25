@@ -57,17 +57,25 @@ public class AssemblyUnit {
         PrintHeader();
 
         for(LineStatement lineStatement: _assemblyUnit) {
-            Instruction mnemonic = lineStatement.getInst();
+            Instruction instruction = lineStatement.getInst();
 
-            if (mnemonic == null) {
+            if (instruction == null) {
                 //TODO: eventually going to have to fix this and delete all the empty line statements from the assembly unit object
                 continue;
             }
             else {
-                int value = SymbolTable.getMnemonic(mnemonic.toString());
-                String hex = Integer.toHexString(value);
+                String mnemonic = instruction.get_mnemonic();
+                String opcode = instruction.get_operand();
 
-                System.out.println((String.format("%-15s%-15s%-15s\n", lineCount, hex, lineStatement.getInst())));
+                int mnemonicValue = SymbolTable.getMnemonic(instruction.get_mnemonic());
+                String mnemonicHex = Integer.toHexString(mnemonicValue);
+
+                if (opcode == null) {
+                    System.out.println(String.format("%-15s%-15s%-15s\n", lineCount, mnemonicHex, mnemonic));
+                }
+                else {
+                    System.out.println(String.format("%-15s%-15s%-15s\n", lineCount, mnemonicHex, mnemonic + " " + opcode));
+                }
 
                 ++lineCount;
             }
@@ -84,17 +92,25 @@ public class AssemblyUnit {
         WriteHeader(writer);
 
         for(LineStatement lineStatement: _assemblyUnit) {
-            Instruction mnemonic = lineStatement.getInst();
+            Instruction instruction = lineStatement.getInst();
 
-            if (mnemonic == null) {
+            if (instruction == null) {
                 //TODO: eventually going to have to fix this and delete all the empty line statements from the assembly unit object
                 continue;
             }
             else {
-                int value = SymbolTable.getMnemonic(mnemonic.toString());
-                String hex = Integer.toHexString(value);
+                String mnemonic = instruction.get_mnemonic();
+                String opcode = instruction.get_operand();
+                
+                int mnemonicValue = SymbolTable.getMnemonic(instruction.get_mnemonic());
+                String mnemonicHex = Integer.toHexString(mnemonicValue);
 
-                writer.write(String.format("%-15s%-15s%-15s\n", lineCount, hex, lineStatement.getInst()));;
+                if (opcode == null) {
+                    writer.write(String.format("%-15s%-15s%-15s\n", lineCount, mnemonicHex, mnemonic));
+                }
+                else {
+                    writer.write(String.format("%-15s%-15s%-15s\n", lineCount, mnemonicHex, mnemonic + " " + opcode));
+                }
 
                 ++lineCount;
             }
@@ -110,16 +126,16 @@ public class AssemblyUnit {
         FileWriter writer = new FileWriter(dstFile);
 
         for(LineStatement lineStatement: _assemblyUnit) {
-            Instruction mnemonic = lineStatement.getInst();
+            Instruction instruction = lineStatement.getInst();
 
-            if (mnemonic == null) {
+            if (instruction == null) {
                 //TODO: eventually going to have to fix this and delete all the empty line statements from the assembly unit object
                 continue;
             }
             else {
-                int value = SymbolTable.getMnemonic(mnemonic.toString());
+                int mnemonicValue = SymbolTable.getMnemonic(instruction.get_mnemonic());
 
-                writer.write(String.format("%8s", Integer.toBinaryString(value) + '\n').replace(' ', '0'));
+                writer.write(String.format("%8s", Integer.toBinaryString(mnemonicValue) + '\n').replace(' ', '0'));
             }
         }
 
@@ -140,10 +156,10 @@ public class AssemblyUnit {
      * @throws IOException
      */
     private void WriteHeader(FileWriter writer) throws IOException {
-        writer.write(String.format("%-15s%-15s%-15s\n","Line", "Obj", "Source"));
+        writer.write(String.format("%-15s%-15s%-15s\n","Line", "Hex Code", "Assembly Code"));
     }
 
     private void PrintHeader() {
-        System.out.println(String.format("%-15s%-15s%-15s\n","Line", "Obj", "Source"));
+        System.out.println(String.format("%-15s%-15s%-15s\n","Line", "Hex Code", "Assembly Code"));
     }
 }

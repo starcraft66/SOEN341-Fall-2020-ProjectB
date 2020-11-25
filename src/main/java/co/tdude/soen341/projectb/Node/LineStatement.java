@@ -9,17 +9,17 @@ public class LineStatement extends Node {
     /**
      * The label for a given line statement
      */
-    LabelToken label;
+    private LabelToken label;
 
     /**
      * The instruction for a given line statement
      */
-    Instruction inst;
+    private Instruction inst;
 
     /**
      * The comment for a given line statement
      */
-    CommentToken comment;
+    private CommentToken comment;
 
     /**
      * Constructor used to create a LineStatement object.

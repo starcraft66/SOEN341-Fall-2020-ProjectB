@@ -45,9 +45,9 @@ public class AssemblerTest {
     @Test
     void AssemblyUnitTest() {
         ArrayList<LineStatement> statements = new ArrayList<>();
-        LineStatement l1 = new LineStatement(new LabelToken(""), new Instruction("A", new Object()), new CommentToken("some comment"));
-        LineStatement l2 = new LineStatement(new LabelToken(""), new Instruction("B", new Object()), new CommentToken("some comment"));
-        LineStatement l3 = new LineStatement(new LabelToken(""), new Instruction("C", new Object()), new CommentToken("some comment"));
+        LineStatement l1 = new LineStatement(new LabelToken(""), new Instruction("A", null), new CommentToken("some comment"));
+        LineStatement l2 = new LineStatement(new LabelToken(""), new Instruction("B", null), new CommentToken("some comment"));
+        LineStatement l3 = new LineStatement(new LabelToken(""), new Instruction("C", null), new CommentToken("some comment"));
         statements.add(l1);
         statements.add(l2);
         statements.add(l3);
