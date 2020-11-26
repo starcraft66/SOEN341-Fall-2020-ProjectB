@@ -134,6 +134,10 @@ public class Lexer implements ILexer {
             }
         }
 
+        //TODO: As per the current logic in the above while loop, the '.' can appear anywhere within the mnemonic.
+        // We only want it to appear after alphabetic characters are scanned.
+        // Write logic to search for it after the mnemonic is scanned.
+
         if (SymbolTable.isMnemonicRegistered(_lexeme)) {
             return new MnemonicToken(_lexeme);
         } else {

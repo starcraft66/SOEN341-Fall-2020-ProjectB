@@ -1,6 +1,7 @@
 package co.tdude.soen341.projectb.Assembler.AssemblyParser;
 
 import co.tdude.soen341.projectb.Assembler.AssemblyUnit;
+import co.tdude.soen341.projectb.Assembler.SourceFile;
 import co.tdude.soen341.projectb.Environment.Environment;
 import co.tdude.soen341.projectb.ErrorReporter.Error;
 import co.tdude.soen341.projectb.ErrorReporter.IReportable;
@@ -37,7 +38,7 @@ public class Parser implements IParser {
     private File _sourceFile;
 
     /**
-     *
+     * Used to log error reports when parsing errors occur.
      */
     private IReportable errorReporter;
 
@@ -57,19 +58,37 @@ public class Parser implements IParser {
     private final String _binaryFilePath;
 
     /**
+     * Flag that instructs the parser to fetch an opcode associated with the preceding mnemonic (for immediate instructions)
+     */
+    private boolean _fetchOpcodeFlag = false;
+
+    /**
+     * Stores the previous token value needed to complete the immediate instruction.
+     */
+    private String _prevTokenValue;
+
+    /**
+     * Holds temporary LineStatement object.
+     */
+    private LineStatement _parsedLineStatement;
+
+    /**
+     * Holds temporary Instruction object.
+     */
+    private Instruction _instruction;
+
+    /**
      * Constructor to instantiate a Parser object.
      * @param env Environment object that supplies the instantiated assembly file, lexer object, and symbol tables.
-     * @param listingFilePath The path for the output file name (and listing with .lst suffix)
+     * //@param listingFilePath The path for the output file name (and listing with .lst suffix)
      */
-    public Parser(Environment env, String listingFilePath, String binaryFilePath) {
+    public Parser(Environment env) {
         _assemblyUnit = new ArrayList<>();
         _lexer = env.getLexer();
         _sourceFile = env.getSourceFile();
         this.errorReporter = env.getErrorReporter();
-        //_labelTable = env.getSymbolTable();
-        //_keywordTable = env.getSymbolTable();
-        _listingFilePath = listingFilePath;
-        _binaryFilePath = binaryFilePath;
+        _listingFilePath = SourceFile.getName();
+        _binaryFilePath = SourceFile.getName();
 
         nextToken();
     }
@@ -84,7 +103,13 @@ public class Parser implements IParser {
         Logger.getLogger("").fine("Parsing an Assembler...");
 
         while (_token.getType() != TokenType.EOF) {
-            _assemblyUnit.add(parseLineStmt());
+            _parsedLineStatement = parseLineStmt();
+            _instruction = _parsedLineStatement.getInst();
+
+            if (_instruction != null && !(_instruction.get_mnemonic() == null)) {
+                _assemblyUnit.add(_parsedLineStatement);
+            }
+
             nextToken();
         }
 
@@ -97,18 +122,10 @@ public class Parser implements IParser {
     private Instruction parseInherent() {
         return new Instruction(_token.getValue(), null);
     }
-
-    /*private Instruction parseImmediate() {
-        if(_token.getType() == TokenType.EOL){
-
-        }
-        if (_token.getType() == TokenType.MNEMONIC){
-            // I would need to be able to 'see' the next token  if order to be able to create a whole Instruction instance
-            if (_token.getType() == TokenType.NUMBER){
-
-            }
-        }
-    }*/
+    
+    private Instruction parseImmediate() {
+        return new Instruction(_prevTokenValue, _token.getValue());
+    }
 
     //---------------------------------------------------------------------------------
 //    private Instruction parseRelative() {
@@ -121,7 +138,7 @@ public class Parser implements IParser {
      */
     private LineStatement parseLineStmt() {
         LabelToken   label = null;
-        Instruction  inst = null;
+        Instruction inst = null;
         CommentToken comment = null;
 
         Logger.getLogger("").fine("Parsing a Line Statement...");
@@ -135,12 +152,23 @@ public class Parser implements IParser {
             return new LineStatement(null, null, (CommentToken) _token);
         }
 
-        if (SymbolTable.isMnemonicRegistered(_token.getValue())) {
-            // If registered, then mnemonic
-            // Right now, we can assume that no operand.
-            //_lexer.getToken();
-            inst = parseInherent();
-            return new LineStatement(null, inst, null);
+        if (SymbolTable.isMnemonicRegistered(_token.getValue()) || _fetchOpcodeFlag) {
+            if (SymbolTable.isInherent(_token.getValue())) {
+                inst = parseInherent();
+                return new LineStatement(null, inst, null);
+            }
+            else if (SymbolTable.isImmediate(_token.getValue()) || _fetchOpcodeFlag){
+                if (_fetchOpcodeFlag) {
+                    _fetchOpcodeFlag = false;
+                    inst = parseImmediate();
+                    return new LineStatement(null, inst, null);
+                }
+                else {
+                    _prevTokenValue = _token.getValue();
+                    _fetchOpcodeFlag = true;
+                    return new LineStatement(null,null, null);
+                }
+            }
         }
         else {
             Error e1 = new Error();

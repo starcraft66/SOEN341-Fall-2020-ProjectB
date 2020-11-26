@@ -23,6 +23,15 @@ public final class SourceFile {
 	 */
 	public static void StoreAssemblyFile(File asmFile) {
 		_asmFile = asmFile;
+		ConvertToString();
+	}
+
+	/**
+	 * Gets the name of the assembly file.
+	 * @return The assembly file name.
+	 */
+	public static String getName() {
+		return _asmFileStr;
 	}
 
 	/**
@@ -30,5 +39,6 @@ public final class SourceFile {
 	 */
 	public static void ConvertToString() {
 		_asmFileStr = _asmFile.toString();
+		_asmFileStr = _asmFileStr.substring(0, _asmFileStr.lastIndexOf('.'));
 	}
 }

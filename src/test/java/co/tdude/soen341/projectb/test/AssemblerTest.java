@@ -1,6 +1,9 @@
 package co.tdude.soen341.projectb.test;
 
+import co.tdude.soen341.projectb.Assembler.AssemblyParser.Parser;
 import co.tdude.soen341.projectb.Assembler.AssemblyUnit;
+import co.tdude.soen341.projectb.Assembler.SourceFile;
+import co.tdude.soen341.projectb.Environment.Environment;
 import co.tdude.soen341.projectb.ErrorReporter.Error;
 import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
 import co.tdude.soen341.projectb.ErrorReporter.Position;
@@ -12,12 +15,15 @@ import co.tdude.soen341.projectb.Reader.Reader;
 import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AssemblerTest {
 
@@ -28,26 +34,35 @@ public class AssemblerTest {
     static void SetupTestFile() throws IOException {
         testfile = File.createTempFile("testfile", ".txt");
         testfile.deleteOnExit();
-        fw = new FileWriter(testfile);
     }
 
     @BeforeEach
-    void EraseTestFile() throws IOException {
-        fw.close();
+    void OverwriteTestFile() throws IOException {
         fw = new FileWriter(testfile); // Wipes contents of testfile every time
     }
 
-    @AfterAll
-    static void Cleanup() throws IOException {
+    @AfterEach
+    void CloseTestFile() throws IOException {
         fw.close();
+    }
+
+    @AfterAll
+    static void DeleteArtifacts() {
+        try {
+            new File("build/resources/test/asm_input.lst").delete();
+            new File("build/resources/test/asm_input.exe").delete();
+        } catch (Exception e) {
+            //swallow
+        }
+
     }
 
     @Test
     void AssemblyUnitTest() {
         ArrayList<LineStatement> statements = new ArrayList<>();
-        LineStatement l1 = new LineStatement(new LabelToken(""), new Instruction("A", new Object()), new CommentToken("some comment"));
-        LineStatement l2 = new LineStatement(new LabelToken(""), new Instruction("B", new Object()), new CommentToken("some comment"));
-        LineStatement l3 = new LineStatement(new LabelToken(""), new Instruction("C", new Object()), new CommentToken("some comment"));
+        LineStatement l1 = new LineStatement(new LabelToken(""), new Instruction("A", null), new CommentToken("some comment"));
+        LineStatement l2 = new LineStatement(new LabelToken(""), new Instruction("B", null), new CommentToken("some comment"));
+        LineStatement l3 = new LineStatement(new LabelToken(""), new Instruction("C", null), new CommentToken("some comment"));
         statements.add(l1);
         statements.add(l2);
         statements.add(l3);
@@ -151,5 +166,37 @@ public class AssemblerTest {
         assertEquals(l.getToken().getType(), TokenType.EOL);
         assertEquals(l.getToken().getType(), TokenType.MNEMONIC);
         assertEquals(l.getToken().getType(), TokenType.EOF);
+    }
+
+    @Test
+    void EndToEndListing() throws IOException, URISyntaxException {
+        File asmFile = Paths.get(getClass().getClassLoader().getResource("asm_input.asm").toURI()).toFile();
+        SourceFile.StoreAssemblyFile(asmFile);
+        Environment environment = new Environment(asmFile);
+        Parser assemblyParser = new Parser(environment);
+        AssemblyUnit assemblyUnit = assemblyParser.parse();
+        assemblyUnit.Assemble(true);
+        // probably terrible performance for large files but should be ok for something tiny
+        InputStream resultInputStream = new FileInputStream("build/resources/test/asm_input.lst");
+        InputStream targetInputStream = getClass().getClassLoader().getResourceAsStream("asm_output.lst");
+        byte[] bytes1 = resultInputStream.readAllBytes();
+        byte[] bytes2 = targetInputStream.readAllBytes();
+        for (int i=0; i < bytes1.length; i++) {
+            assertEquals(bytes1[i], bytes2[i]);
+        }
+    }
+
+    @Test
+    void EndToEndBinary() throws IOException, URISyntaxException {
+        File asmFile = Paths.get(getClass().getClassLoader().getResource("asm_input.asm").toURI()).toFile();
+        SourceFile.StoreAssemblyFile(asmFile);
+        Environment environment = new Environment(asmFile);
+        Parser assemblyParser = new Parser(environment);
+        AssemblyUnit assemblyUnit = assemblyParser.parse();
+        assemblyUnit.Assemble(false);
+        // probably terrible performance for large files but should be ok for something tiny
+        InputStream resultInputStream = new FileInputStream("build/resources/test/asm_input.exe");
+        InputStream targetInputStream = getClass().getClassLoader().getResourceAsStream("asm_binary");
+        assertTrue(Arrays.equals(resultInputStream.readAllBytes(), targetInputStream.readAllBytes()));
     }
 }

@@ -9,17 +9,17 @@ public class LineStatement extends Node {
     /**
      * The label for a given line statement
      */
-    LabelToken label;
+    private LabelToken label;
 
     /**
      * The instruction for a given line statement
      */
-    Instruction inst;
+    private Instruction inst;
 
     /**
      * The comment for a given line statement
      */
-    CommentToken comment;
+    private CommentToken comment;
 
     /**
      * Constructor used to create a LineStatement object.
@@ -39,5 +39,22 @@ public class LineStatement extends Node {
      */
     public Instruction getInst() {
         return inst;
+    }
+
+    public String toString() {
+        String out = "";
+        if (label != null) {
+            out += label.getValue() + ": ";
+        }
+        if (inst != null) {
+            out += inst.get_mnemonic();
+            if (inst.get_operand() != null) {
+                out += " " + inst.get_operand();
+            }
+        }
+        if (comment != null) {
+            out += " ;" + comment.getValue();
+        }
+        return out;
     }
 }

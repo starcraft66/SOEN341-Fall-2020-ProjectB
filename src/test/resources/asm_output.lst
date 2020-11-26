@@ -1,0 +1,29 @@
+Line           Hex Code       Assembly Code  
+1              0              halt           
+2              1              pop            
+3              2              dup            
+4              3              exit           
+5              a4             ldv.u3 4       
+6              4              ret            
+7              c              not            
+8              d              and            
+9              e              or             
+10             3a             br.i5 10       
+11             f              xor            
+12             10             neg            
+13             11             inc            
+14             12             dec            
+15             9a             addv.u3 2      
+16             14             sub            
+17             15             mul            
+18             16             div            
+19             17             rem            
+20             18             shl            
+21             19             shr            
+22             1a             teq            
+23             1b             tne            
+24             1c             tlt            
+25             1d             tgt            
+26             1e             tle            
+27             1f             tge            
+28             0              halt           

@@ -8,27 +8,31 @@ public class Instruction {
     /**
      * The mnemonic for a given LineStatement.
      */
-    String mnemonic;
+    private String _mnemonic;
 
     /**
      * The operand for a given LineStatement.
      */
-    String operand;
+    private String _operand;
 
     /**
      * Constructor used to create an Instruction object.
-     * @param value The mnemonic.
+     * @param opcode The mnemonic.
      * @param operand The operand.
      */
-    public Instruction(String value, Object operand) { // Replace operand with the operand class once it's in
-        mnemonic = value;
+    public Instruction(String opcode, String operand) { // Replace operand with the operand class once it's in
+        _mnemonic = opcode;
+        _operand = operand;
     }
 
     /**
      * Convert the mnemonic to string representation.
      */
-    @Override
-    public String toString() {
-        return mnemonic;
+    public String get_mnemonic() {
+        return _mnemonic;
+    }
+
+    public String get_operand() {
+        return _operand;
     }
 }

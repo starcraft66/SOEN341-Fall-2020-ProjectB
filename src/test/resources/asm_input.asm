@@ -6,7 +6,7 @@
  ret
  not
  and
- or 
+ or
  br.i5 10
  xor
  neg
@@ -23,6 +23,6 @@
  tne
  tlt
  tgt
- tle 
- tge 
+ tle
+ tge
  halt
