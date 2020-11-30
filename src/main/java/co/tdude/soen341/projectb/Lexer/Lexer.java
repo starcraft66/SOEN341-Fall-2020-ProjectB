@@ -8,6 +8,7 @@ import co.tdude.soen341.projectb.ErrorReporter.Error;
 
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Lexical Analyzer (Lexer) used to extract tokens from an assembly file.
@@ -16,7 +17,7 @@ public class Lexer implements ILexer {
     /**
      * SymbolTable that holds opcodes and their hex equivalences.
      */
-    //private ISymbolTable _keywordTable;
+    private SymbolTable<MnemonicToken> _keywordTable;
 
     /**
      * Current line position within the lexer
@@ -49,15 +50,57 @@ public class Lexer implements ILexer {
     /**
      * Constructor for a Lexer object.
      * @param reader Used to read individual characters in the assembly file.
-     * @param //keywordTable Symbol table of key-value pairs that represent opcodes and their hex representations, respectively.
      */
-    public Lexer(IReader reader/*, ISymbolTable keywordTable*/) {
+    public Lexer(IReader reader) {
 
-        //_keywordTable = keywordTable;
+        _keywordTable = new SymbolTable<>();
+
+        InitKeywordTable();
+
+        ereport = new ErrorReporter();
+
         _reader = reader;
         _curLinePos = 1;
         _curColPos = 0;
         read(); // Prime the first character;
+    }
+
+    private void InitKeywordTable() {
+        // Inherent
+        _keywordTable.put("halt", new MnemonicToken("halt", 0x00, false, 0) );
+        _keywordTable.put("pop", new MnemonicToken("pop", 0x01, false, 0));
+        _keywordTable.put("dup", new MnemonicToken("dup", 0x02, false, 0));
+        _keywordTable.put("exit", new MnemonicToken("exit", 0x03, false, 0));
+        _keywordTable.put("ret", new MnemonicToken("ret", 0x04, false, 0));
+        _keywordTable.put("not", new MnemonicToken("not", 0x0C, false, 0));
+        _keywordTable.put("and", new MnemonicToken("and", 0x0D, false, 0));
+        _keywordTable.put("or", new MnemonicToken("or", 0x0E, false, 0));
+        _keywordTable.put("xor", new MnemonicToken("xor", 0x0F, false, 0));
+        _keywordTable.put("neg", new MnemonicToken("neg", 0x10, false, 0));
+        _keywordTable.put("inc", new MnemonicToken("inc", 0x11, false, 0));
+        _keywordTable.put("dec", new MnemonicToken("dec", 0x12, false, 0));
+        _keywordTable.put("add", new MnemonicToken("add", 0x13, false, 0));
+        _keywordTable.put("sub", new MnemonicToken("sub", 0x14, false, 0));
+        _keywordTable.put("mul", new MnemonicToken("mul", 0x15, false, 0));
+        _keywordTable.put("div", new MnemonicToken("div", 0x16, false, 0));
+        _keywordTable.put("rem", new MnemonicToken("rem", 0x17, false, 0));
+        _keywordTable.put("shl", new MnemonicToken("shl", 0x18, false, 0));
+        _keywordTable.put("shr", new MnemonicToken("shr", 0x19, false, 0));
+        _keywordTable.put("teq", new MnemonicToken("teq", 0x1A, false, 0));
+        _keywordTable.put("tne", new MnemonicToken("tne", 0x1B, false, 0));
+        _keywordTable.put("tlt", new MnemonicToken("tlt", 0x1C, false, 0));
+        _keywordTable.put("tgt", new MnemonicToken("tgt", 0x1D, false, 0));
+        _keywordTable.put("tle", new MnemonicToken("tle", 0x1E, false, 0));
+        _keywordTable.put("tge", new MnemonicToken("tge", 0x1F, false, 0));
+
+        // Immediate
+        _keywordTable.put("br.i5", new MnemonicToken("br.i5", 0x30, true, 5));
+        _keywordTable.put("brf.i5", new MnemonicToken("brf.i5", 0x50, true, 5));
+        _keywordTable.put("enter.u5", new MnemonicToken("enter.u5", 0x70, false, 5));
+        _keywordTable.put("ldc.i3", new MnemonicToken("ldc.i3", 0x90, true, 3));
+        _keywordTable.put("addv.u3", new MnemonicToken("addv.u3", 0x98, false, 3));
+        _keywordTable.put("ldv.u3", new MnemonicToken("ldv.u3", 0xA0, false, 3));
+        _keywordTable.put("stv.u3", new MnemonicToken("stv.u3", 0xA8, false, 3));
     }
 
     /**
@@ -138,11 +181,8 @@ public class Lexer implements ILexer {
         // We only want it to appear after alphabetic characters are scanned.
         // Write logic to search for it after the mnemonic is scanned.
 
-        if (SymbolTable.isMnemonicRegistered(_lexeme)) {
-            return new MnemonicToken(_lexeme);
-        } else {
-            return new IdentifierToken(_lexeme);
-        }
+        // This returns the MnemonicToken if it was found in the
+        return Objects.requireNonNullElseGet(_keywordTable.get(_lexeme), () -> new LabelToken(_lexeme));
     }
 
 //    private Token scanDirective() {
@@ -230,10 +270,5 @@ public class Lexer implements ILexer {
                 read();
                 return new IllegalToken();
         }
-    }
-
-    // No setter as Lexeme is only mutated inside Lexer
-    public String getLexeme() {
-        return _lexeme;
     }
 }

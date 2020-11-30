@@ -1,5 +1,7 @@
 package co.tdude.soen341.projectb.Assembler;
 
+import co.tdude.soen341.projectb.Lexer.Tokens.LabelToken;
+import co.tdude.soen341.projectb.Node.Instruction;
 import co.tdude.soen341.projectb.Node.LineStatement;
 import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 
@@ -15,6 +17,11 @@ public class AssemblyUnit {
      * List of LineStatement objects.
      */
     private ArrayList<LineStatement> _assemblyUnit;
+
+    /**
+     * Hold all label addresses
+     */
+    private SymbolTable<Integer> labelTable;
 
     /**
      * The path to the output listing file
@@ -35,6 +42,8 @@ public class AssemblyUnit {
      * A writer to generate the listing file when requested
      */
     private FileWriter lstwriter;
+
+    int currentAddr;
 
     /**
      * Constructor used to instantiate an AssemblyUnit object.
@@ -62,17 +71,57 @@ public class AssemblyUnit {
             PrintHeader(); // For the console
         }
 
+        /*
+        First pass. Responsibilities:
+        Register all encountered labels into the label table.
+        Resolve offsets when possible.
+         */
+        int currentAddr = 0;
+        ArrayList<LabelToken> labelsToBeApplied = new ArrayList<>();
+        for (LineStatement ls : _assemblyUnit) {
+            if (ls.getLabel() != null) labelsToBeApplied.add(ls.getLabel());
+            if (ls.getInst() != null) {
+                // Bind all labels that were prior to this instruction
+                for (LabelToken lt : labelsToBeApplied) {
+                    labelTable.put(lt.getValue(), currentAddr);
+                }
+                // If the instruction requires resolving, attempt to resolve it
+                if (!ls.getInst().isResolved()) {
+                    ls.getInst().resolve(currentAddr, labelTable);
+                }
+                currentAddr++;
+            }
+        }
+
+        /*
+        Second pass. Responsibilities:
+        If an offset is unresolved, resolve it. If it still can't be resolved,
+        throw an error as you have an undefined label.
+         */
+
+        currentAddr = 0;
         int lineCount = 0;
         for (LineStatement ls : _assemblyUnit) {
             lineCount++;
             // Process the line statement and feed it to the active writers
-            int instVal = getBinaryRepresentation(ls);
-            binwriter.write(instVal); // Write raw bytes of the opcode+operand representation to the .exe
+            if (ls.getInst() != null) {
+                if (!ls.getInst().isResolved()) {
+                    if (!ls.getInst().resolve(currentAddr, labelTable)) {
+                        // If it was unable to be resolved, fatal error, unresolvable offset
+                        // Todo implement error reporter here?
+                        throw new RuntimeException("Unresolvable offset");
+                    }
+                }
+                int instVal = getBinaryRepresentation(ls.getInst());
+                binwriter.write(instVal); // Write raw bytes of the opcode+operand representation to the .exe
+            }
             if (createListing) {
-                String strRepresentation = getStringRepresentation(lineCount, ls);
+                String strRepresentation = getStringRepresentation(lineCount, currentAddr, ls);
                 System.out.print(strRepresentation);
                 lstwriter.write(strRepresentation);
             }
+            // Increment addr if there was an instruction
+            if (ls.getInst() != null) currentAddr++;
         }
 
         binwriter.close();
@@ -80,20 +129,16 @@ public class AssemblyUnit {
     }
 
     /**
-     * Convert the linestatement to integer (binary) representation
-     * @param ls the linestatement to convert
+     * Convert an instruction to binary. The instruction MUST BE RESOLVED
+     * @param inst the instruction to convert
      * @return an integer value representing the opcode+operand combination
      */
-    private int getBinaryRepresentation(LineStatement ls) {
-        var instruction = ls.getInst();
-        String mnemonic = instruction.get_mnemonic();
-        String opcode = instruction.get_operand();
-
-        int instructionValue = SymbolTable.getMnemonic(mnemonic);
-        if (opcode != null) {
-            instructionValue += Integer.parseInt(opcode);
+    private int getBinaryRepresentation(Instruction inst) {
+        int binrep = inst.getMnemonic().getOpcode();
+        if (inst.getOperand() != null) {
+            binrep += inst.getOperand().getResolvedValue();
         }
-        return instructionValue;
+        return binrep;
     }
 
     /**
@@ -102,9 +147,9 @@ public class AssemblyUnit {
      * @param ls the linestatement to convert
      * @return a 45 character wide representation of ls
      */
-    private String getStringRepresentation(int lineCount, LineStatement ls) {
-        var hexInstruction = Integer.toHexString(getBinaryRepresentation(ls));
-        return String.format("%-15s%-15s%-15s\n", lineCount, hexInstruction, ls.toString());
+    private String getStringRepresentation(int lineCount, int currentAddr, LineStatement ls) {
+        var hexInstruction = Integer.toHexString(getBinaryRepresentation(ls.getInst()));
+        return String.format("%-15s%-15s%-15s%-15s\n", lineCount, currentAddr, hexInstruction, ls.toString());
     }
 
     /**
@@ -149,13 +194,13 @@ public class AssemblyUnit {
      * @throws IOException
      */
     private void WriteHeader(FileWriter writer) throws IOException {
-        writer.write(String.format("%-15s%-15s%-15s\n","Line", "Hex Code", "Assembly Code"));
+        writer.write(String.format("%-15s%-15s%-15s%-15s\n%n","Line", "Addr", "Hex Code", "Assembly Code"));
     }
 
     /**
      * Print a header to console
      */
     private void PrintHeader() {
-        System.out.printf("%-15s%-15s%-15s\n%n","Line", "Hex Code", "Assembly Code");
+        System.out.printf("%-15s%-15s%-15s%-15s\n%n","Line", "Addr", "Hex Code", "Assembly Code");
     }
 }

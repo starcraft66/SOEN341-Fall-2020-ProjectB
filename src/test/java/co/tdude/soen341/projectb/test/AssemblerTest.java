@@ -60,9 +60,9 @@ public class AssemblerTest {
     @Test
     void AssemblyUnitTest() {
         ArrayList<LineStatement> statements = new ArrayList<>();
-        LineStatement l1 = new LineStatement(new LabelToken(""), new Instruction("A", null), new CommentToken("some comment"));
-        LineStatement l2 = new LineStatement(new LabelToken(""), new Instruction("B", null), new CommentToken("some comment"));
-        LineStatement l3 = new LineStatement(new LabelToken(""), new Instruction("C", null), new CommentToken("some comment"));
+        LineStatement l1 = new LineStatement(new LabelToken(""), new Instruction(new MnemonicToken("A", 1, false, 0), null), new CommentToken("some comment"));
+        LineStatement l2 = new LineStatement(new LabelToken(""), new Instruction(new MnemonicToken("B", 2, false, 0), null), new CommentToken("some comment"));
+        LineStatement l3 = new LineStatement(new LabelToken(""), new Instruction(new MnemonicToken("C", 3, false, 0), null), new CommentToken("some comment"));
         statements.add(l1);
         statements.add(l2);
         statements.add(l3);
@@ -71,35 +71,6 @@ public class AssemblerTest {
         assertEquals(l1, intermediateRepresentation.getAssemblyUnit().get(0));
         assertEquals(l2, intermediateRepresentation.getAssemblyUnit().get(1));
         assertEquals(l3, intermediateRepresentation.getAssemblyUnit().get(2));
-    }
-
-    @Test
-    void InstructionTest() {
-        assertEquals(0x00, SymbolTable.getMnemonic("halt"));
-        assertEquals(0x01, SymbolTable.getMnemonic("pop"));
-        assertEquals(0x02, SymbolTable.getMnemonic("dup"));
-        assertEquals(0x03, SymbolTable.getMnemonic("exit"));
-        assertEquals(0x04, SymbolTable.getMnemonic("ret"));
-        assertEquals(0x0C, SymbolTable.getMnemonic("not"));
-        assertEquals(0x0D, SymbolTable.getMnemonic("and"));
-        assertEquals(0x0E, SymbolTable.getMnemonic("or"));
-        assertEquals(0x0F, SymbolTable.getMnemonic("xor"));
-        assertEquals(0x10, SymbolTable.getMnemonic("neg"));
-        assertEquals(0x11, SymbolTable.getMnemonic("inc"));
-        assertEquals(0x12, SymbolTable.getMnemonic("dec"));
-        assertEquals(0x13, SymbolTable.getMnemonic("add"));
-        assertEquals(0x14, SymbolTable.getMnemonic("sub"));
-        assertEquals(0x15, SymbolTable.getMnemonic("mul"));
-        assertEquals(0x16, SymbolTable.getMnemonic("div"));
-        assertEquals(0x17, SymbolTable.getMnemonic("rem"));
-        assertEquals(0x18, SymbolTable.getMnemonic("shl"));
-        assertEquals(0x19, SymbolTable.getMnemonic("shr"));
-        assertEquals(0x1A, SymbolTable.getMnemonic("teq"));
-        assertEquals(0x1B, SymbolTable.getMnemonic("tne"));
-        assertEquals(0x1C, SymbolTable.getMnemonic("tlt"));
-        assertEquals(0x1D, SymbolTable.getMnemonic("tgt"));
-        assertEquals(0x1E, SymbolTable.getMnemonic("tle"));
-        assertEquals(0x1F, SymbolTable.getMnemonic("tge"));
     }
 
     @Test
