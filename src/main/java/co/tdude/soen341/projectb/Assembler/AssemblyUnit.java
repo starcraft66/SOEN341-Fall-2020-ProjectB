@@ -53,6 +53,7 @@ public class AssemblyUnit {
      */
     public AssemblyUnit(ArrayList<LineStatement> assemblyUnit, String listingFilePath, String binaryFilePath) {
         _assemblyUnit = assemblyUnit;
+        labelTable = new SymbolTable<>();
         _listingFilePath = listingFilePath;
         _binaryFilePath = binaryFilePath;
         binwriter= null;
@@ -85,6 +86,7 @@ public class AssemblyUnit {
                 for (LabelToken lt : labelsToBeApplied) {
                     labelTable.put(lt.getValue(), currentAddr);
                 }
+                labelsToBeApplied.clear();
                 // If the instruction requires resolving, attempt to resolve it
                 if (!ls.getInst().isResolved()) {
                     ls.getInst().resolve(currentAddr, labelTable);
@@ -98,7 +100,6 @@ public class AssemblyUnit {
         If an offset is unresolved, resolve it. If it still can't be resolved,
         throw an error as you have an undefined label.
          */
-
         currentAddr = 0;
         int lineCount = 0;
         for (LineStatement ls : _assemblyUnit) {
@@ -134,9 +135,21 @@ public class AssemblyUnit {
      * @return an integer value representing the opcode+operand combination
      */
     private int getBinaryRepresentation(Instruction inst) {
+        // TODO: Add checking for negative/positive bounds
         int binrep = inst.getMnemonic().getOpcode();
         if (inst.getOperand() != null) {
-            binrep += inst.getOperand().getResolvedValue();
+            int val = inst.getOperand().getResolvedValue();
+            if (val < 0) {
+                if (!inst.getMnemonic().isSigned()) {
+                    // if it's a negative number and signed operands are disallowed:
+                    // fail
+                    throw new RuntimeException("Negative number in a disallowed context");
+                } else {
+                    // Signed numbers are allowed
+                    val = (int)Math.pow(2, inst.getMnemonic().getOpsize()) + val;
+                }
+            }
+            binrep += val;
         }
         return binrep;
     }
@@ -149,7 +162,8 @@ public class AssemblyUnit {
      */
     private String getStringRepresentation(int lineCount, int currentAddr, LineStatement ls) {
         var hexInstruction = Integer.toHexString(getBinaryRepresentation(ls.getInst()));
-        return String.format("%-15s%-15s%-15s%-15s\n", lineCount, currentAddr, hexInstruction, ls.toString());
+        var hexAddr = Integer.toHexString(currentAddr);
+        return String.format("%-15s%-15s%-15s%-15s\n", lineCount, hexAddr, hexInstruction, ls.toString());
     }
 
     /**

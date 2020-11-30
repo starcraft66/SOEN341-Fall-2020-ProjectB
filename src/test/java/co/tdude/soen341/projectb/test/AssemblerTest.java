@@ -1,5 +1,6 @@
 package co.tdude.soen341.projectb.test;
 
+import co.tdude.soen341.projectb.Assembler.Assembler;
 import co.tdude.soen341.projectb.Assembler.AssemblyParser.Parser;
 import co.tdude.soen341.projectb.Assembler.AssemblyUnit;
 import co.tdude.soen341.projectb.Assembler.SourceFile;
@@ -169,5 +170,23 @@ public class AssemblerTest {
         InputStream resultInputStream = new FileInputStream("build/resources/test/asm_input.exe");
         InputStream targetInputStream = getClass().getClassLoader().getResourceAsStream("asm_binary");
         assertTrue(Arrays.equals(resultInputStream.readAllBytes(), targetInputStream.readAllBytes()));
+    }
+
+    @Test
+    void LabelTest() throws IOException {
+        fw.write("Loop add\nadd\nbr.i5 Loop\n");
+        fw.flush();
+        Parser p = new Parser(new Environment(testfile));
+        AssemblyUnit au = p.parse();
+        au.Assemble(true);
+    }
+
+    @Test
+    void EmptyLineTest() throws IOException {
+        fw.write("add\n;Comment\nsub\n");
+        fw.flush();
+        Parser p = new Parser(new Environment(testfile));
+        AssemblyUnit au = p.parse();
+        au.Assemble(true);
     }
 }
