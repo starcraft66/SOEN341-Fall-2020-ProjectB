@@ -25,6 +25,7 @@ public class LabelToken extends OperandToken {
         Integer lookupResult = labelTable.get(this.getValue());
         if (lookupResult != null) {
             resolvedValue = lookupResult - currentAddr;
+            resolved=true;
             return true;
         } else {
             return false;
