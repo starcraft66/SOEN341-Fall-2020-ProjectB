@@ -185,13 +185,21 @@ public class Lexer implements ILexer {
         return Objects.requireNonNullElseGet(_keywordTable.get(_lexeme), () -> new LabelToken(_lexeme));
     }
 
-//    private Token scanDirective() {
-//        // TODO: Sprint 2
-//    }
+    /**
+     * Scans a directive when encountered
+     * @return a new DirectiveToken instance
+     */
+    private Token scanDirective() {
+        return new DirectiveToken(_lexeme);
+    }
 
-//    private Token scanString() {
-//        // TODO: Sprint 2
-//    }
+    /**
+     * Scans a String when encountered
+     * @return a new StringToken instance
+     */
+    private Token scanString() {
+        return new StringToken(_lexeme);
+    }
 
     private Token scanComment() {
         while (_ch != '\n' && _ch != '\r' && _ch != '\0') { // Not endline or EOF
@@ -251,8 +259,8 @@ public class Lexer implements ILexer {
             case 'Z':
                 return scanIdentifier();
 
-//                case '.':  /* dot for directives as a first character */
-//                    return scanDirective(); TODO: SPRINT 2
+                case '.':
+                    return scanDirective();
 
             case '-':
             case '0': case '1': case '2': case '3': case '4':
@@ -262,8 +270,8 @@ public class Lexer implements ILexer {
             case ';':
                 return scanComment();
 
-//                case '"':
-//                    return scanString(); // TODO: STRING STUFF
+                case '"':
+                   return scanString();
 
             default:
                 LexerError("Position:"+getPosition()+" Illegal Token Detected");

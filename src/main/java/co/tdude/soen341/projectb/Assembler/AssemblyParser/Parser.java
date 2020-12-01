@@ -42,7 +42,7 @@ public class Parser implements IParser {
     private IReportable errorReporter;
 
     /**
-     * The list of LineStatements that comprise the AssumblyUnit.
+     * The list of LineStatements that comprise the AssemblyUnit.
      */
     private ArrayList<LineStatement> _assemblyUnit;
 
