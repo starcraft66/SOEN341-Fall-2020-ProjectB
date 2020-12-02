@@ -16,7 +16,7 @@ abstract public class OperandToken extends Token{
         super(lexeme);
         resolved = false;
     }
-
+    //TODO: Javadoc
     public boolean isResolved() {
         return resolved;
     }

@@ -101,7 +101,9 @@ public class Lexer implements ILexer {
         _keywordTable.put("addv.u3", new MnemonicToken("addv.u3", 0x98, false, 3));
         _keywordTable.put("ldv.u3", new MnemonicToken("ldv.u3", 0xA0, false, 3));
         _keywordTable.put("stv.u3", new MnemonicToken("stv.u3", 0xA8, false, 3));
+
     }
+
 
     /**
      * Gets the current column and line position being parsed in the assembly file.
