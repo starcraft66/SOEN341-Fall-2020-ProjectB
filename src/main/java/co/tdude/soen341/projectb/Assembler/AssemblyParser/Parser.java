@@ -9,10 +9,7 @@ import co.tdude.soen341.projectb.Lexer.ILexer;
 import co.tdude.soen341.projectb.Lexer.Tokens.*;
 import co.tdude.soen341.projectb.Node.Instruction;
 import co.tdude.soen341.projectb.Node.LineStatement;
-import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 
-import javax.sound.sampled.Line;
-import javax.xml.stream.events.Comment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Logger;

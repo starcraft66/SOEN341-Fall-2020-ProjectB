@@ -4,12 +4,12 @@ import co.tdude.soen341.projectb.Lexer.Tokens.MnemonicToken;
 import co.tdude.soen341.projectb.Lexer.Tokens.OperandToken;
 import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 
-import java.util.Objects;
-
 /**
  * Representation of an assembly instruction (mnemonic + opcode).
  */
 public class Instruction {
+
+    private Boolean isRelative = false;
 
     private MnemonicToken mt;
     
@@ -18,6 +18,17 @@ public class Instruction {
     public Instruction(MnemonicToken mt, OperandToken ot) {
         this.mt = mt;
         this.ot = ot;
+        setRelative();
+    }
+
+    private void setRelative() {
+        if (mt.getOpsize() >= 8) {
+            isRelative = true;
+        }
+    }
+
+    public Boolean getRelative() {
+        return isRelative;
     }
 
     /**

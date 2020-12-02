@@ -101,6 +101,11 @@ public class Lexer implements ILexer {
         _keywordTable.put("addv.u3", new MnemonicToken("addv.u3", 0x98, false, 3));
         _keywordTable.put("ldv.u3", new MnemonicToken("ldv.u3", 0xA0, false, 3));
         _keywordTable.put("stv.u3", new MnemonicToken("stv.u3", 0xA8, false, 3));
+
+        // Relative
+        _keywordTable.put("lda.i16", new MnemonicToken("lda.i16", 0xD5, true, 16));
+        _keywordTable.put("call.i16", new MnemonicToken("call.i16", 0xE7, true, 16));
+        _keywordTable.put("trap", new MnemonicToken("trap", 0xFF, true, 8));
     }
 
     /**

@@ -1,6 +1,5 @@
 package co.tdude.soen341.projectb.test;
 
-import co.tdude.soen341.projectb.Assembler.Assembler;
 import co.tdude.soen341.projectb.Assembler.AssemblyParser.Parser;
 import co.tdude.soen341.projectb.Assembler.AssemblyUnit;
 import co.tdude.soen341.projectb.Assembler.SourceFile;
@@ -13,7 +12,6 @@ import co.tdude.soen341.projectb.Lexer.Tokens.*;
 import co.tdude.soen341.projectb.Node.Instruction;
 import co.tdude.soen341.projectb.Node.LineStatement;
 import co.tdude.soen341.projectb.Reader.Reader;
-import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 import org.junit.jupiter.api.*;
 
 import java.io.*;
@@ -21,7 +19,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,9 +58,9 @@ public class AssemblerTest {
     @Test
     void AssemblyUnitTest() {
         ArrayList<LineStatement> statements = new ArrayList<>();
-        LineStatement l1 = new LineStatement(new LabelToken(""), new Instruction(new MnemonicToken("A", 1, false, 0), null), new CommentToken("some comment"));
-        LineStatement l2 = new LineStatement(new LabelToken(""), new Instruction(new MnemonicToken("B", 2, false, 0), null), new CommentToken("some comment"));
-        LineStatement l3 = new LineStatement(new LabelToken(""), new Instruction(new MnemonicToken("C", 3, false, 0), null), new CommentToken("some comment"));
+        LineStatement l1 = new LineStatement(new LabelToken(""), new Instruction(new MnemonicToken("A", 1, false, 0), null), new CommentToken("some comment"), false);
+        LineStatement l2 = new LineStatement(new LabelToken(""), new Instruction(new MnemonicToken("B", 2, false, 0), null), new CommentToken("some comment"), false);
+        LineStatement l3 = new LineStatement(new LabelToken(""), new Instruction(new MnemonicToken("C", 3, false, 0), null), new CommentToken("some comment"), false);
         statements.add(l1);
         statements.add(l2);
         statements.add(l3);

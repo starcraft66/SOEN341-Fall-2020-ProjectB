@@ -6,6 +6,7 @@ import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
  * Token used to identify a number/operand within an assembly file.
  */
 public class NumberToken extends OperandToken {
+
     /**
      * The value of the number/operand.
      */

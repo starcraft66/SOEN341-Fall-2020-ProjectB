@@ -26,3 +26,6 @@
  tle 
  tge 
  halt
+ lda.i16 60000
+ call.i16 20000
+ trap 200

@@ -1,0 +1,33 @@
+Line           Addr           Hex Code       Assembly Code  
+
+1              0              0              halt           
+2              1              1              pop            
+3              2              2              dup            
+4              3              3              exit           
+5              4              a4             ldv.u3 4       
+6              5              4              ret            
+7              6              c              not            
+8              7              d              and            
+9              8              e              or             
+10             9              3a             br.i5 10       
+11             a              f              xor            
+12             b              10             neg            
+13             c              11             inc            
+14             d              12             dec            
+15             e              9a             addv.u3 2      
+16             f              14             sub            
+17             10             15             mul            
+18             11             16             div            
+19             12             17             rem            
+20             13             18             shl            
+21             14             19             shr            
+22             15             1a             teq            
+23             16             1b             tne            
+24             17             1c             tlt            
+25             18             1d             tgt            
+26             19             1e             tle            
+27             1a             1f             tge            
+28             1b             0              halt           
+29             1c             d5ea60         lda.i16 60000  
+30             1d             e74e20         call.i16 20000 
+31             1e             ffc8           trap 200       

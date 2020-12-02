@@ -67,6 +67,7 @@ public class AssemblyUnit {
      */
     public void Assemble(boolean createListing) throws IOException {
         binwriter = setupBinaryFile();
+
         if (createListing) {
             lstwriter = setupListingFile(); // For the writer
             PrintHeader(); // For the console
@@ -79,18 +80,23 @@ public class AssemblyUnit {
          */
         int currentAddr = 0;
         ArrayList<LabelToken> labelsToBeApplied = new ArrayList<>();
+
         for (LineStatement ls : _assemblyUnit) {
             if (ls.getLabel() != null) labelsToBeApplied.add(ls.getLabel());
+
             if (ls.getInst() != null) {
                 // Bind all labels that were prior to this instruction
                 for (LabelToken lt : labelsToBeApplied) {
                     labelTable.put(lt.getValue(), currentAddr);
                 }
+
                 labelsToBeApplied.clear();
+
                 // If the instruction requires resolving, attempt to resolve it
                 if (!ls.getInst().isResolved()) {
                     ls.getInst().resolve(currentAddr, labelTable);
                 }
+
                 currentAddr++;
             }
         }
@@ -102,8 +108,10 @@ public class AssemblyUnit {
          */
         currentAddr = 0;
         int lineCount = 0;
+
         for (LineStatement ls : _assemblyUnit) {
             lineCount++;
+
             // Process the line statement and feed it to the active writers
             if (ls.getInst() != null) {
                 if (!ls.getInst().isResolved()) {
@@ -113,14 +121,17 @@ public class AssemblyUnit {
                         throw new RuntimeException("Unresolvable offset");
                     }
                 }
+
                 int instVal = getBinaryRepresentation(ls.getInst());
                 binwriter.write(instVal); // Write raw bytes of the opcode+operand representation to the .exe
             }
+
             if (createListing) {
                 String strRepresentation = getStringRepresentation(lineCount, currentAddr, ls);
                 System.out.print(strRepresentation);
                 lstwriter.write(strRepresentation);
             }
+
             // Increment addr if there was an instruction
             if (ls.getInst() != null) currentAddr++;
         }
@@ -128,6 +139,7 @@ public class AssemblyUnit {
         binwriter.close();
         if (lstwriter != null) lstwriter.close();
     }
+
 
     /**
      * Convert an instruction to binary. The instruction MUST BE RESOLVED
@@ -137,20 +149,62 @@ public class AssemblyUnit {
     private int getBinaryRepresentation(Instruction inst) {
         // TODO: Add checking for negative/positive bounds
         int binrep = inst.getMnemonic().getOpcode();
+
         if (inst.getOperand() != null) {
             int val = inst.getOperand().getResolvedValue();
+
             if (val < 0) {
                 if (!inst.getMnemonic().isSigned()) {
                     // if it's a negative number and signed operands are disallowed:
                     // fail
                     throw new RuntimeException("Negative number in a disallowed context");
-                } else {
+                }
+                else {
                     // Signed numbers are allowed
                     val = (int)Math.pow(2, inst.getMnemonic().getOpsize()) + val;
                 }
             }
+
+            if (inst.getRelative()) {
+                if (inst.getMnemonic().getOpsize() == 8) {
+                    byte[] data = new byte[2];
+
+                    data[0] = (byte) binrep;
+                    data[1] = (byte) val;
+
+                    var byteToInt = ((data[1] & 0xFF) << 0) | ((data[0] & 0xFF) << 8);
+
+                    return byteToInt;
+                }
+                else if (inst.getMnemonic().getOpsize() == 16) {
+                    if (val > 0) {
+                        byte[] data = new byte[3];
+
+                        data[0] = (byte) binrep;
+                        data[1] = (byte) ((val >>> 8) & 0xFF); // >>> means unsigned right shift
+                        data[2] = (byte) (val & 0xFF); //0xFF masks all but the lowest eight bits
+
+                        var byteToInt = ((data[2] & 0xFF) << 0) | ((data[1] & 0xFF) << 8) | ((data[0] & 0xFF) << 16);
+
+                        return byteToInt;
+                    }
+                    else {
+                        byte[] data = new byte[3];
+
+                        data[0] = (byte) binrep;
+                        data[1] = (byte) ((val >> 8) & 0xFF); // >> means signed right shift
+                        data[2] = (byte) (val & 0xFF); //0xFF masks all but the lowest eight bits
+
+                        var byteToInt = ((data[2] & 0xFF) << 0) | ((data[1] & 0xFF) << 8) | ((data[0] & 0xFF) << 16);
+
+                        return byteToInt;
+                    }
+                }
+            }
+
             binrep += val;
         }
+
         return binrep;
     }
 
