@@ -5,7 +5,7 @@ import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 /**
  * Token used to identify a String within an assembly file
  */
-public class StringToken extends OperandToken{
+public class StringToken extends OperandToken {
     /**
      * Constructor used to create a StringToken object.
      * @param lexeme: the lexeme

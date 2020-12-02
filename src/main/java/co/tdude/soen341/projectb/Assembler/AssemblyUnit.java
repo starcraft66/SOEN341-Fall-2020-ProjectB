@@ -1,5 +1,6 @@
 package co.tdude.soen341.projectb.Assembler;
 
+import co.tdude.soen341.projectb.Lexer.Tokens.DirectiveToken;
 import co.tdude.soen341.projectb.Lexer.Tokens.LabelToken;
 import co.tdude.soen341.projectb.Node.Instruction;
 import co.tdude.soen341.projectb.Node.LineStatement;
@@ -122,8 +123,24 @@ public class AssemblyUnit {
                     }
                 }
 
-                int instVal = getBinaryRepresentation(ls.getInst());
-                binwriter.write(instVal); // Write raw bytes of the opcode+operand representation to the .exe
+                if (ls.getInst().getMnemonic() instanceof DirectiveToken) {
+                    var directiveValue = ls.getInst().getOperand().getValue();
+                    directiveValue += "\0";
+                    char[] directiveArray = directiveValue.toCharArray();
+
+                    int ASCIIEquivalent;
+
+                    for (var ch : directiveArray) {
+                        if (ch != '"') {
+                            ASCIIEquivalent = (int) ch;
+                            binwriter.write(ASCIIEquivalent);
+                        }
+                    }
+                }
+                else {
+                    int instVal = getBinaryRepresentation(ls.getInst());
+                    binwriter.write(instVal); // Write raw bytes of the opcode+operand representation to the .exe
+                }
             }
 
             if (createListing) {
@@ -221,9 +238,32 @@ public class AssemblyUnit {
      * @return a 45 character wide representation of ls
      */
     private String getStringRepresentation(int lineCount, int currentAddr, LineStatement ls) {
-        var hexInstruction = Integer.toHexString(getBinaryRepresentation(ls.getInst()));
-        var hexAddr = Integer.toHexString(currentAddr);
-        return String.format("%-15s%-15s%-15s%-15s\n", lineCount, hexAddr, hexInstruction, ls.toString());
+        if (ls.getInst().getMnemonic() instanceof DirectiveToken) {
+            var directiveValue = ls.getInst().getOperand().getValue();
+            directiveValue += "\0";
+            char[] directiveArray = directiveValue.toCharArray();
+            String hexInstruction = "";
+            int ASCIIEquivalent;
+
+            for (var ch : directiveArray) {
+                ASCIIEquivalent = (int) ch;
+                if (ASCIIEquivalent == 0) {
+                    hexInstruction += "00";
+                }
+                else {
+                    hexInstruction += Integer.toHexString(ASCIIEquivalent);
+                }
+            }
+
+            var hexAddr = Integer.toHexString(currentAddr);
+
+            return String.format("%-15s%-15s%-15s%-15s\n", lineCount, hexAddr, hexInstruction, ls.toString());
+        }
+        else {
+            var hexInstruction = Integer.toHexString(getBinaryRepresentation(ls.getInst()));
+            var hexAddr = Integer.toHexString(currentAddr);
+            return String.format("%-15s%-15s%-15s%-15s\n", lineCount, hexAddr, hexInstruction, ls.toString());
+        }
     }
 
     /**

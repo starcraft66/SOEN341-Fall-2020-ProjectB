@@ -1,11 +1,10 @@
 package co.tdude.soen341.projectb.Lexer;
 
+import co.tdude.soen341.projectb.ErrorReporter.Error;
 import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
 import co.tdude.soen341.projectb.Lexer.Tokens.*;
-import co.tdude.soen341.projectb.SymbolTable.*;
-import co.tdude.soen341.projectb.Reader.*;
-import co.tdude.soen341.projectb.ErrorReporter.Error;
-
+import co.tdude.soen341.projectb.Reader.IReader;
+import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -106,6 +105,9 @@ public class Lexer implements ILexer {
         _keywordTable.put("lda.i16", new MnemonicToken("lda.i16", 0xD5, true, 16));
         _keywordTable.put("call.i16", new MnemonicToken("call.i16", 0xE7, true, 16));
         _keywordTable.put("trap", new MnemonicToken("trap", 0xFF, true, 8));
+
+        // Directive
+        _keywordTable.put(".cstring", new DirectiveToken(".cstring", 0, false, 0));
     }
 
 
@@ -187,7 +189,7 @@ public class Lexer implements ILexer {
         // We only want it to appear after alphabetic characters are scanned.
         // Write logic to search for it after the mnemonic is scanned.
 
-        // This returns the MnemonicToken if it was found in the
+        // This returns the MnemonicToken if it was found in the keyword table.
         return Objects.requireNonNullElseGet(_keywordTable.get(_lexeme), () -> new LabelToken(_lexeme));
     }
 
@@ -196,7 +198,23 @@ public class Lexer implements ILexer {
      * @return a new DirectiveToken instance
      */
     private Token scanDirective() {
-        return new DirectiveToken(_lexeme);
+        _lexeme += _ch;
+        _ch = read();
+
+        while (!Character.isWhitespace(_ch) && _ch != '\0') {
+            if (Character.isAlphabetic(_ch)) {
+                _curColPos++;
+                _lexeme += _ch;
+
+                _ch = read();
+            }
+            else {
+                //TODO: handle error
+                LexerError("Position: "+ getPosition()+" The Directive had a non-directive character in it.");
+            }
+        }
+
+        return new DirectiveToken(_lexeme, 0, false, 0);
     }
 
     /**
@@ -204,6 +222,23 @@ public class Lexer implements ILexer {
      * @return a new StringToken instance
      */
     private Token scanString() {
+        _ch = read();
+
+        while (_ch != '"') {
+            _curColPos++;
+            _lexeme += _ch;
+
+            _ch = read();
+        }
+
+        if (_ch == '"') {
+            _ch = read();
+
+            while (_ch == ' ' || _ch == '\t') {
+                _ch = read();
+            }
+        }
+
         return new StringToken(_lexeme);
     }
 
@@ -265,8 +300,8 @@ public class Lexer implements ILexer {
             case 'Z':
                 return scanIdentifier();
 
-                case '.':
-                    return scanDirective();
+            case '.':
+                return scanDirective();
 
             case '-':
             case '0': case '1': case '2': case '3': case '4':
@@ -276,8 +311,8 @@ public class Lexer implements ILexer {
             case ';':
                 return scanComment();
 
-                case '"':
-                   return scanString();
+            case '"':
+               return scanString();
 
             default:
                 LexerError("Position:"+getPosition()+" Illegal Token Detected");

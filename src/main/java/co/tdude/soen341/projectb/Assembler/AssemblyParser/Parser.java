@@ -173,20 +173,18 @@ public class Parser implements IParser {
                     nextToken();
                     assertTerminator(_token);
                     break;
-                case DIRECTIVE:{
-                    MnemonicToken mnemToken;
-                    mnemToken = (MnemonicToken) _token;
-                    if (mnemToken.getOpsize() > 0) {
-                        nextToken();
-                        assertOperand(_token);
-                        inst = new Instruction(mnemToken, (OperandToken) _token);
-                    } else {
-                        inst = new Instruction(mnemToken, null);
-                    }
+                case DIRECTIVE:
+                    DirectiveToken directiveToken;
+                    directiveToken = (DirectiveToken) _token;
+
+                    nextToken();
+
+                    assertOperand(_token);
+                    inst = new Instruction(directiveToken, (OperandToken) _token);
+
                     nextToken();
                     assertTerminator(_token);
                     break;
-                }
             }
         }
         return new LineStatement(label, inst, comment);

@@ -29,5 +29,6 @@ Line           Addr           Hex Code       Assembly Code
 27             1a             1f             tge            
 28             1b             0              halt           
 29             1c             d5ea60         lda.i16 60000  
-30             1d             e74e20         call.i16 20000 
-31             1e             ffc8           trap 200       
+30             1f             e74e20         call.i16 20000 
+31             22             ffc8           trap 200       
+32             24             413200         .cstring A2    

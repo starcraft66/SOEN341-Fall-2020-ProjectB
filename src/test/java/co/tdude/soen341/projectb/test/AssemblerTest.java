@@ -179,6 +179,24 @@ public class AssemblerTest {
     }
 
     @Test
+    void DirectiveTest() throws IOException {
+        fw.write(".cstring \"A2\"\n.csting \"B3\"");
+        fw.flush();
+        Parser p = new Parser(new Environment(testfile));
+        AssemblyUnit au = p.parse();
+        au.Assemble(true);
+    }
+
+    @Test
+    void RelativeInstructionTest() throws IOException {
+        fw.write("lda.i16 60000\ncall.i16 20000\ntrap 200");
+        fw.flush();
+        Parser p = new Parser(new Environment(testfile));
+        AssemblyUnit au = p.parse();
+        au.Assemble(true);
+    }
+
+    @Test
     void EmptyLineTest() throws IOException {
         fw.write("add\n;Comment\nsub\n");
         fw.flush();

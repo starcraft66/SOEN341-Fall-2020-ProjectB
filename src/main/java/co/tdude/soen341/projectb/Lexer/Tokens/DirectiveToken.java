@@ -8,8 +8,9 @@ public class DirectiveToken extends MnemonicToken {
      * Constructor used to create a DirectiveToken object.
      * @param lexeme: the lexeme
      */
-    public DirectiveToken(String lexeme) {
-        super (lexeme,0,false,0);
+    public DirectiveToken(String lexeme, int opcode, boolean signed, int opsize) {
+        super (lexeme,opcode,signed,opsize);
+
         type = TokenType.DIRECTIVE;
     }
 }
