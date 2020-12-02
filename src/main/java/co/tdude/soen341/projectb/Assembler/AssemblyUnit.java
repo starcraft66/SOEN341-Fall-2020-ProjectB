@@ -133,7 +133,13 @@ public class AssemblyUnit {
             }
 
             // Increment addr if there was an instruction
-            if (ls.getInst() != null) currentAddr++;
+            if (ls.getInst() != null) {
+                currentAddr++;
+                int opsz = ls.getInst().getMnemonic().getOpsize();
+                if (opsz >= 8) {
+                    currentAddr += opsz/8;
+                }
+            }
         }
 
         binwriter.close();
