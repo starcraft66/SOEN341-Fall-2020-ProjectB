@@ -177,7 +177,14 @@ public class AssemblerTest {
         AssemblyUnit au = p.parse();
         au.Assemble(true);
     }
-
+    @Test
+    void NewErrorTest() throws IOException {
+        fw.write("adx");
+        fw.flush();
+        Parser p = new Parser(new Environment(testfile));
+        AssemblyUnit au = p.parse();
+        au.Assemble(true);
+    }
     @Test
     void DirectiveTest() throws IOException {
         fw.write(".cstring \"A2\"\n.cstring \"B3\"");

@@ -1,6 +1,8 @@
 package co.tdude.soen341.projectb.Assembler;
 
 import co.tdude.soen341.projectb.Lexer.Tokens.DirectiveToken;
+import co.tdude.soen341.projectb.ErrorReporter.Error;
+import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
 import co.tdude.soen341.projectb.Lexer.Tokens.LabelToken;
 import co.tdude.soen341.projectb.Node.Instruction;
 import co.tdude.soen341.projectb.Node.LineStatement;
@@ -46,6 +48,11 @@ public class AssemblyUnit {
      */
     private FileWriter lstwriter;
 
+    /**
+    *An ErrorReporter object to store error messages
+    */
+    private ErrorReporter ereporter;
+
     int currentAddr;
 
     /**
@@ -61,6 +68,7 @@ public class AssemblyUnit {
         _binaryFilePath = binaryFilePath;
         binwriter= null;
         lstwriter= null;
+        ereporter=null;
     }
 
     /**
@@ -69,10 +77,21 @@ public class AssemblyUnit {
      * @throws IOException if an unspecified IO error occurs
      */
     public void Assemble(boolean createListing) throws IOException {
-        binwriter = setupBinaryFile();
+        try{binwriter = setupBinaryFile();}
+        catch (IOException e)
+        {
+            Error e1=new Error();
+            e1.generatemsg(Error.err_type.IOERROR, null, null);
+            ereporter.record(e1);
+        }
 
         if (createListing) {
-            lstwriter = setupListingFile(); // For the writer
+            try {lstwriter = setupListingFile();} // For the writer
+                catch (IOException e){
+                    Error e1=new Error();
+                    e1.generatemsg(Error.err_type.IOERROR, null, null);
+                    ereporter.record(e1);
+                }
             PrintHeader(); // For the console
         }
 
@@ -119,9 +138,10 @@ public class AssemblyUnit {
             if (ls.getInst() != null) {
                 if (!ls.getInst().isResolved()) {
                     if (!ls.getInst().resolve(currentAddr, labelTable)) {
-                        // If it was unable to be resolved, fatal error, unresolvable offset
-                        // Todo implement error reporter here?
-                        throw new RuntimeException("Unresolvable offset");
+                        Error e1=new Error();
+                        e1.generatemsg(Error.err_type.UNRESOLVABLE, null, null);
+                        ereporter.record(e1);
+                        throw new RuntimeException();
                     }
                 }
 
@@ -176,6 +196,7 @@ public class AssemblyUnit {
 
         binwriter.close();
         if (lstwriter != null) lstwriter.close();
+
     }
 
 
@@ -195,7 +216,10 @@ public class AssemblyUnit {
                 if (!inst.getMnemonic().isSigned()) {
                     // if it's a negative number and signed operands are disallowed:
                     // fail
-                    throw new RuntimeException("Negative number in a disallowed context");
+                    Error e1=new Error();
+                    e1.generatemsg(Error.err_type.NEGATIVE, null, null);
+                    ereporter.record(e1);
+                    throw new RuntimeException();
                 }
                 else {
                     // Signed numbers are allowed
@@ -286,11 +310,13 @@ public class AssemblyUnit {
      * @return A FileWriter opened with a new binary file
      * @throws IOException if an IO error occurs
      */
-    private BufferedOutputStream setupBinaryFile() throws IOException {
+    private BufferedOutputStream setupBinaryFile() throws IOException  {
         String fileName = _binaryFilePath + ".exe";
         File dstFile = new File(fileName);
 
         return new BufferedOutputStream(new FileOutputStream(dstFile));
+
+
     }
 
     /**
@@ -298,15 +324,23 @@ public class AssemblyUnit {
      * @return A FileWriter opened with a new listing file
      * @throws IOException if an IO error occurs
      */
-    private FileWriter setupListingFile() throws IOException {
+    private FileWriter setupListingFile() throws IOException{
         String fileName = _listingFilePath + ".lst";
         File dstFile = new File(fileName);
 
         FileWriter writer = new FileWriter(dstFile);
 
-        WriteHeader(writer);
-
+        try {
+            WriteHeader(writer);
+        }
+        catch (IOException e){
+            Error e1=new Error();
+            e1.generatemsg(Error.err_type.IOERROR, null, null);
+            ereporter.record(e1);
+        }
         return writer;
+
+
     }
 
     /**
@@ -323,7 +357,8 @@ public class AssemblyUnit {
      * @throws IOException
      */
     private void WriteHeader(FileWriter writer) throws IOException {
-        writer.write(String.format("%-15s%-15s%-15s%-15s\n%n","Line", "Addr", "Hex Code", "Assembly Code"));
+      writer.write(String.format("%-15s%-15s%-15s%-15s\n%n","Line", "Addr", "Hex Code", "Assembly Code"));
+
     }
 
     /**

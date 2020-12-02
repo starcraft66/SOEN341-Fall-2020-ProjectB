@@ -119,21 +119,27 @@ public class Parser implements IParser {
 //    } TODO: Sprint 2
     void assertMnemonic(Token t) {
         if (!(t instanceof MnemonicToken)) {
-            errorReporter.record(new Error("Expected Mnemonic, got " + t.getType()));
+            Error e1=new Error();
+            e1.generatemsg(Error.err_type.MNEMONIC, _lexer.getPosition(), t);
+            errorReporter.record(e1);
             throw new RuntimeException();
         }
     }
 
     void assertOperand(Token t) {
         if (!(t instanceof OperandToken)) {
-            errorReporter.record(new Error("Expected Operand, got " + t.getType()));
+            Error e1=new Error();
+            e1.generatemsg(Error.err_type.OPERAND, _lexer.getPosition(), t);
+            errorReporter.record(e1);
             throw new RuntimeException();
         }
     }
 
     void assertTerminator(Token t) {
         if (!(t instanceof EOLToken || t instanceof EOFToken || t instanceof CommentToken)) {
-            errorReporter.record(new Error("Expected a terminating token, got " + t.getType()));
+            Error e1=new Error();
+            e1.generatemsg(Error.err_type.TERMINATOR, _lexer.getPosition(), t);
+            errorReporter.record(e1);
             throw new RuntimeException();
         }
     }

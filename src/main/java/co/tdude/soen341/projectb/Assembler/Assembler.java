@@ -2,6 +2,7 @@ package co.tdude.soen341.projectb.Assembler;
 
 import co.tdude.soen341.projectb.Assembler.AssemblyParser.Parser;
 import co.tdude.soen341.projectb.Environment.Environment;
+import co.tdude.soen341.projectb.ErrorReporter.Error;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -60,10 +61,20 @@ public class Assembler {
         Logger.getLogger("").info("Generating executable file");
         if (ns.getBoolean("listing")) {
             Logger.getLogger("").info("Generating listing file");
-            assemblyUnit.Assemble(true);
+            try{assemblyUnit.Assemble(true);}
+            catch (IOException e){
+                Error e1=new Error();
+                e1.generatemsg(Error.err_type.IOERROR, null, null);
+                environment.getErrorReporter().record(e1);
+            }
         } else {
             // Otherwise, just assemble it to exe with no listing
-            assemblyUnit.Assemble(false);
+            try{assemblyUnit.Assemble(false);}
+            catch (IOException e){
+                Error e1=new Error();
+                e1.generatemsg(Error.err_type.IOERROR, null, null);
+                environment.getErrorReporter().record(e1);
+            }
         }
         Logger.getLogger("").info("Assembly parsing done");
 
