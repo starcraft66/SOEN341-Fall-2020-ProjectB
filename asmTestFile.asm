@@ -4,13 +4,13 @@
  exit
  ldv.u3 4
  ret
- not
+ Label1 not
  and
  or 
  br.i5 10
  xor
  neg
- inc
+ Label3 inc
  dec
  addv.u3 2
  sub

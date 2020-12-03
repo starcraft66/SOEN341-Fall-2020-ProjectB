@@ -8,6 +8,8 @@ import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Holds the list of LineStatement objects that represents the entire .asm file.
@@ -145,8 +147,8 @@ public class AssemblyUnit {
 
             if (createListing) {
                 String strRepresentation = getStringRepresentation(lineCount, currentAddr, ls);
-                System.out.print(strRepresentation);
-                lstwriter.write(strRepresentation);
+                Logger.getLogger("").info(strRepresentation);
+                lstwriter.write(strRepresentation + "\n");
             }
 
             // Increment addr if there was an instruction
@@ -156,6 +158,19 @@ public class AssemblyUnit {
                 if (opsz >= 8) {
                     currentAddr += opsz/8;
                 }
+            }
+        }
+
+        // Print label table to console and to file
+        if (createListing) {
+            Logger.getLogger("").info("Label Table");
+            String header = String.format("%-15s%-15s", "Label", "Addr");
+            Logger.getLogger("").info(header);
+            lstwriter.write("\n" + header + "\n\n");
+            for (Map.Entry<String, Integer> lt : labelTable.getMap().entrySet()) {
+                String line = String.format("%-15s%-15s", lt.getKey(), lt.getValue());
+                Logger.getLogger("").info(line);
+                lstwriter.write(line + "\n");
             }
         }
 
@@ -257,12 +272,12 @@ public class AssemblyUnit {
 
             var hexAddr = Integer.toHexString(currentAddr);
 
-            return String.format("%-15s%-15s%-15s%-15s\n", lineCount, hexAddr, hexInstruction, ls.toString());
+            return String.format("%-15s%-15s%-15s%-15s", lineCount, hexAddr, hexInstruction, ls.toString());
         }
         else {
             var hexInstruction = Integer.toHexString(getBinaryRepresentation(ls.getInst()));
             var hexAddr = Integer.toHexString(currentAddr);
-            return String.format("%-15s%-15s%-15s%-15s\n", lineCount, hexAddr, hexInstruction, ls.toString());
+            return String.format("%-15s%-15s%-15s%-15s", lineCount, hexAddr, hexInstruction, ls.toString());
         }
     }
 
@@ -315,6 +330,6 @@ public class AssemblyUnit {
      * Print a header to console
      */
     private void PrintHeader() {
-        System.out.printf("%-15s%-15s%-15s%-15s\n%n","Line", "Addr", "Hex Code", "Assembly Code");
+        Logger.getLogger("").info(String.format("%-15s%-15s%-15s%-15s","Line", "Addr", "Hex Code", "Assembly Code"));
     }
 }

@@ -9,6 +9,10 @@ import java.util.HashMap;
  */
 public class SymbolTable<T> {
 
+    public HashMap<String, T> getMap() {
+        return _table;
+    }
+
     /**
      * Hash map that holds the mnemonic strings as keys and their hex representations as values.
      */
