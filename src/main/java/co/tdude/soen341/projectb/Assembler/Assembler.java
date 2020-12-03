@@ -34,10 +34,6 @@ public class Assembler {
                 .help("Print verbose information")
                 .action(Arguments.storeTrue())
                 .required(false);
-        parser.addArgument("-s", "--skip-errors")
-                .help("Skip errors and continue parsing")
-                .action(Arguments.storeTrue())
-                .required(false);
         Namespace ns = null;
         try {
             ns = parser.parseArgs(args);
