@@ -180,7 +180,7 @@ public class AssemblerTest {
 
     @Test
     void DirectiveTest() throws IOException {
-        fw.write(".cstring \"A2\"\n.csting \"B3\"");
+        fw.write(".cstring \"A2\"\n.cstring \"B3\"");
         fw.flush();
         Parser p = new Parser(new Environment(testfile));
         AssemblyUnit au = p.parse();

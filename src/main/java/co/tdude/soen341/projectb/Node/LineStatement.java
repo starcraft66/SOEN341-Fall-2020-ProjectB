@@ -44,7 +44,7 @@ public class LineStatement extends Node {
     public String toString() {
         String out = "";
         if (label != null) {
-            out += label.getValue() + ": ";
+            out += label.getValue() + " ";
         }
         if (inst != null) {
             out += inst.toString();
