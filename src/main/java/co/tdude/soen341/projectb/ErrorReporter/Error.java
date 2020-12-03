@@ -13,7 +13,18 @@ public class Error {
     //enum is used to choose the error type for which a message will be printed
        private String message;
         public enum err_type{
-            INCORRECT,
+            MNEMONIC,
+            NONIDENT,
+            ILLEGALTOKEN,
+            MISSINGNEWLINE,
+            OPERAND,
+            TERMINATOR,
+            UNRESOLVABLE,
+            NEGATIVE,
+            IOERROR,
+            NUMBERFORMAT,
+            DIRECTIVE
+
 
         }
     /**
@@ -40,10 +51,46 @@ public class Error {
 
         public void generatemsg (err_type type, String pos, Token probl){
             switch(type){
-                case INCORRECT:{
-                    new Error("Position: "+pos+"   "+probl.getValue()+" is not a recognized opcode.");
+                case MNEMONIC:{
+                    new Error("Position:"+pos+" Expected Mnemonic, got " +probl.getValue());
+                    break;}
+                case OPERAND:{
+                    new Error("Position:"+pos+" Expected Operand, got " + probl.getValue());
+                    break;}
+                case TERMINATOR:{
+                    new Error("Position:"+pos+" Expected a terminating token, got " + probl.getValue());
+                    break;}
+                case NONIDENT:{
+                    new Error("Position: "+ pos+" The Identifier had a non-identifiable character in it");
+                    break;
+                }
+                case ILLEGALTOKEN:{
+                    new Error("Position:"+pos+" Illegal Token Detected");
+                    break;
+                }
+                case MISSINGNEWLINE:{
+                    new Error("Position: "+pos+" A \\r character must be followed by a \\n on dos architectures");
+                    break;
+                }
+                case UNRESOLVABLE:{
+                    new Error("Unable to resolve offset");
                     break;}
 
+                case NEGATIVE:{
+                    new Error("Negative number in a disallowed context");
+                    break;}
+
+                case IOERROR:{
+                    new Error("File cannot be read or written to");
+                    break;}
+                case NUMBERFORMAT:{
+                    new Error("Number Format Error");
+                    break;
+                }
+                case DIRECTIVE:{
+                    new Error("Position: "+pos+" The Directive had a non-directive character in it.");
+                    break;
+                }
                 default:{
                     new Error("Unknown error");
                     break;}

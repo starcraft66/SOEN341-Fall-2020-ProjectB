@@ -126,21 +126,16 @@ public class Lexer implements ILexer {
         try {
             _ch = _reader.read();
         } catch (IOException e) {
-            // IO EXCEPTION!
+            Error e1=new Error();
+            e1.generatemsg(Error.err_type.IOERROR,null,null);
+            ereport.record(e1);
             System.exit(1);
         }
         return _ch;
     }
 
-    /**
-     *Creates a new error and adds it to ErrorReporter
-     * @param msg: error message which is to be added to ErrorReporter
-     */
-    private void LexerError(String msg) {
-        Error e1=new Error(msg);
-        ereport.record(e1);
-//         Shouldn't this exit in some way?
-    }
+
+
 
 
     /*
@@ -164,7 +159,9 @@ public class Lexer implements ILexer {
             Integer.parseInt(_lexeme);
             return new NumberToken(_lexeme);
         } catch (NumberFormatException e) {
-            LexerError(e.getMessage());
+            Error e1=new Error();
+            e1.generatemsg(Error.err_type.NUMBERFORMAT, null, null);
+           ereport.record(e1);
             return new IllegalToken();
         }
     }
@@ -178,7 +175,9 @@ public class Lexer implements ILexer {
             _curColPos++;
             _lexeme += _ch;
             if (!(Character.isAlphabetic(_ch) || Character.isDigit(_ch) || _ch == '.')) {
-                LexerError("Position: "+ getPosition()+" The Identifier had a non-ident character in it");
+                Error e1=new Error();
+                e1.generatemsg(Error.err_type.NONIDENT,getPosition(),null);
+                ereport.record(e1);
             }
             else {
                 _ch = read();
@@ -209,8 +208,9 @@ public class Lexer implements ILexer {
                 _ch = read();
             }
             else {
-                //TODO: handle error
-                LexerError("Position: "+ getPosition()+" The Directive had a non-directive character in it.");
+               Error e1=new Error();
+               e1.generatemsg(Error.err_type.DIRECTIVE, getPosition(), null);
+               ereport.record(e1);
             }
         }
 
@@ -277,7 +277,9 @@ public class Lexer implements ILexer {
 
             case '\r':
                 if (read() != '\n') {
-                    LexerError("Position: "+ getPosition()+" A \\r character must be followed by a \\n on dos architectures");
+                    Error e1=new Error();
+                    e1.generatemsg(Error.err_type.MISSINGNEWLINE,getPosition(),null);
+                    ereport.record(e1);
                 }
             case '\n':
                 // I think this works to carriage return on to the next line of source
@@ -315,9 +317,11 @@ public class Lexer implements ILexer {
                return scanString();
 
             default:
-                LexerError("Position:"+getPosition()+" Illegal Token Detected");
+            {  Error e1=new Error();
+                e1.generatemsg(Error.err_type.ILLEGALTOKEN,getPosition(),null);
+                ereport.record(e1);
                 read();
-                return new IllegalToken();
+                return new IllegalToken();}
         }
     }
 }

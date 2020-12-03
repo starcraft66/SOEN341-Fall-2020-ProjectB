@@ -1,5 +1,8 @@
 package co.tdude.soen341.projectb.Reader;
 
+import co.tdude.soen341.projectb.ErrorReporter.Error;
+import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
+
 import java.io.*;
 import java.util.logging.Logger;
 
@@ -8,16 +11,18 @@ import java.util.logging.Logger;
  */
 public class Reader implements IReader {
     private BufferedReader bfReader;
-
+    private  ErrorReporter ereporter=null;
     /**
      * Reads one character at a time from the assembly file.
      * @return The next character.
-     * @throws IOException
+     * If it fails, add an IO type error to ErrorReporter
      */
     @Override
-    public char read() throws IOException {
+    public char read() throws IOException{
         int nextChar = bfReader.read();
         return isEOFchar(nextChar) ? '\0' : (char) nextChar;
+
+
     }
 
     /**
@@ -34,10 +39,16 @@ public class Reader implements IReader {
 
     /**
      * Close the reader
-     * @throws IOException: In case an error occurs
+     * If it fails, add an IO type error to ErrorReporter
      */
-    public void closeReader () throws IOException {
-        bfReader.close();
+    public void closeReader ()  {
+       try {bfReader.close();}
+       catch(IOException e){
+           Error e1=new Error();
+           e1.generatemsg(Error.err_type.IOERROR, null, null);
+           ereporter.record(e1);
+
+       }
     }
 
     /**
