@@ -6,13 +6,13 @@ Line           Addr           Hex Code       Assembly Code
 4              3              3              exit           
 5              4              a4             ldv.u3 4       
 6              5              4              ret            
-7              6              c              Label1: not    
+7              6              c              Label1 not     
 8              7              d              and            
 9              8              e              or             
 10             9              3a             br.i5 10       
 11             a              f              xor            
 12             b              10             neg            
-13             c              11             Label3: inc    
+13             c              11             Label3 inc     
 14             d              12             dec            
 15             e              9a             addv.u3 2      
 16             f              14             sub            
