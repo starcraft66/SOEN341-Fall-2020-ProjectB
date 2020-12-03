@@ -6,13 +6,9 @@ import co.tdude.soen341.projectb.Environment.Environment;
 import co.tdude.soen341.projectb.ErrorReporter.Error;
 import co.tdude.soen341.projectb.ErrorReporter.IReportable;
 import co.tdude.soen341.projectb.Lexer.ILexer;
-import co.tdude.soen341.projectb.Lexer.Tokens.CommentToken;
-import co.tdude.soen341.projectb.Lexer.Tokens.LabelToken;
-import co.tdude.soen341.projectb.Lexer.Tokens.Token;
-import co.tdude.soen341.projectb.Lexer.Tokens.TokenType;
+import co.tdude.soen341.projectb.Lexer.Tokens.*;
 import co.tdude.soen341.projectb.Node.Instruction;
 import co.tdude.soen341.projectb.Node.LineStatement;
-import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,7 +39,7 @@ public class Parser implements IParser {
     private IReportable errorReporter;
 
     /**
-     * The list of LineStatements that comprise the AssumblyUnit.
+     * The list of LineStatements that comprise the AssemblyUnit.
      */
     private ArrayList<LineStatement> _assemblyUnit;
 
@@ -56,16 +52,6 @@ public class Parser implements IParser {
      * The path to the output binary file
      */
     private final String _binaryFilePath;
-
-    /**
-     * Flag that instructs the parser to fetch an opcode associated with the preceding mnemonic (for immediate instructions)
-     */
-    private boolean _fetchOpcodeFlag = false;
-
-    /**
-     * Stores the previous token value needed to complete the immediate instruction.
-     */
-    private String _prevTokenValue;
 
     /**
      * Holds temporary LineStatement object.
@@ -106,7 +92,7 @@ public class Parser implements IParser {
             _parsedLineStatement = parseLineStmt();
             _instruction = _parsedLineStatement.getInst();
 
-            if (_instruction != null && !(_instruction.get_mnemonic() == null)) {
+            if (_instruction != null && !(_instruction.getMnemonic() == null)) {
                 _assemblyUnit.add(_parsedLineStatement);
             }
 
@@ -116,21 +102,41 @@ public class Parser implements IParser {
         return new AssemblyUnit(_assemblyUnit, _listingFilePath, _binaryFilePath);
     }
 
-    /**
-     * Parse a 1 Byte no Operand Mnemonic
-     */
-    private Instruction parseInherent() {
-        return new Instruction(_token.getValue(), null);
-    }
-    
-    private Instruction parseImmediate() {
-        return new Instruction(_prevTokenValue, _token.getValue());
-    }
+//    /**
+//     * Parse a 1 Byte no Operand Mnemonic
+//     */
+//    private Instruction parseInherent() {
+//        return new Instruction((MnemonicToken) _token, null);
+//    }
+//
+//    private Instruction parseImmediate() {
+//        return new Instruction(_prevTokenValue, _token.getValue());
+//    }
 
     //---------------------------------------------------------------------------------
 //    private Instruction parseRelative() {
 //        // your code...
 //    } TODO: Sprint 2
+    void assertMnemonic(Token t) {
+        if (!(t instanceof MnemonicToken)) {
+            errorReporter.record(new Error("Expected Mnemonic, got " + t.getType()));
+            throw new RuntimeException();
+        }
+    }
+
+    void assertOperand(Token t) {
+        if (!(t instanceof OperandToken)) {
+            errorReporter.record(new Error("Expected Operand, got " + t.getType()));
+            throw new RuntimeException();
+        }
+    }
+
+    void assertTerminator(Token t) {
+        if (!(t instanceof EOLToken || t instanceof EOFToken || t instanceof CommentToken)) {
+            errorReporter.record(new Error("Expected a terminating token, got " + t.getType()));
+            throw new RuntimeException();
+        }
+    }
 
     /**
      * Creates a LineStatement object depending on the type of token being parsed.
@@ -143,42 +149,45 @@ public class Parser implements IParser {
 
         Logger.getLogger("").fine("Parsing a Line Statement...");
 
-        // Test if EOL first
-        if (_token.getType() == TokenType.EOL) {
-            return new LineStatement(null, null, null);
-        }
+        while (_token.getType() != TokenType.EOL && _token.getType() != TokenType.EOF) {
+            switch (_token.getType()) {
+                case IDENT:
+                    label = (LabelToken) _token;
+                    nextToken();
+                    break;
+                case MNEMONIC:
+                    MnemonicToken mnemToken;
+                    mnemToken = (MnemonicToken) _token;
+                    if (mnemToken.getOpsize() > 0) {
+                        nextToken();
+                        assertOperand(_token);
+                        inst = new Instruction(mnemToken, (OperandToken) _token);
+                    } else {
+                        inst = new Instruction(mnemToken, null);
+                    }
+                    nextToken();
+                    assertTerminator(_token);
+                    break;
+                case COMMENT:
+                    comment = (CommentToken) _token;
+                    nextToken();
+                    assertTerminator(_token);
+                    break;
+                case DIRECTIVE:
+                    DirectiveToken directiveToken;
+                    directiveToken = (DirectiveToken) _token;
 
-        if (_token.getType() == TokenType.COMMENT) {
-            return new LineStatement(null, null, (CommentToken) _token);
-        }
+                    nextToken();
 
-        if (SymbolTable.isMnemonicRegistered(_token.getValue()) || _fetchOpcodeFlag) {
-            if (SymbolTable.isInherent(_token.getValue())) {
-                inst = parseInherent();
-                return new LineStatement(null, inst, null);
+                    assertOperand(_token);
+                    inst = new Instruction(directiveToken, (OperandToken) _token);
+
+                    nextToken();
+                    assertTerminator(_token);
+                    break;
             }
-            else if (SymbolTable.isImmediate(_token.getValue()) || _fetchOpcodeFlag){
-                if (_fetchOpcodeFlag) {
-                    _fetchOpcodeFlag = false;
-                    inst = parseImmediate();
-                    return new LineStatement(null, inst, null);
-                }
-                else {
-                    _prevTokenValue = _token.getValue();
-                    _fetchOpcodeFlag = true;
-                    return new LineStatement(null,null, null);
-                }
-            }
         }
-        else {
-            Error e1 = new Error();
-            e1.generatemsg(Error.err_type.INCORRECT, _lexer.getPosition(), _token);
-            errorReporter.record(e1);
-            //If not registered, then label
-            // TODO Label processing
-        }
-
-        return null;
+        return new LineStatement(label, inst, comment);
     }
 
     /**

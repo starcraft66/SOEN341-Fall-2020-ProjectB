@@ -34,10 +34,6 @@ public class Assembler {
                 .help("Print verbose information")
                 .action(Arguments.storeTrue())
                 .required(false);
-        parser.addArgument("-s", "--skip-errors")
-                .help("Skip errors and continue parsing")
-                .action(Arguments.storeTrue())
-                .required(false);
         Namespace ns = null;
         try {
             ns = parser.parseArgs(args);
@@ -70,7 +66,11 @@ public class Assembler {
             assemblyUnit.Assemble(false);
         }
         Logger.getLogger("").info("Assembly parsing done");
-        System.out.println(environment.getErrorReporter().getErrorLst().toString());
+
+        if(!environment.getErrorReporter().getErrorLst().isEmpty()) {
+            Logger.getLogger("").severe("The following errors were encountered:");
+            Logger.getLogger("").severe(environment.getErrorReporter().getErrorLst().toString());
+        }
     }
 
 }

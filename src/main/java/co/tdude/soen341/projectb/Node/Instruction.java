@@ -1,38 +1,75 @@
 package co.tdude.soen341.projectb.Node;
 
+import co.tdude.soen341.projectb.Lexer.Tokens.MnemonicToken;
+import co.tdude.soen341.projectb.Lexer.Tokens.OperandToken;
+import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
+
 /**
  * Representation of an assembly instruction (mnemonic + opcode).
  */
 public class Instruction {
 
-    /**
-     * The mnemonic for a given LineStatement.
-     */
-    private String _mnemonic;
+    private Boolean isRelative = false;
 
-    /**
-     * The operand for a given LineStatement.
-     */
-    private String _operand;
+    private MnemonicToken mt;
+    
+    private OperandToken ot;
 
-    /**
-     * Constructor used to create an Instruction object.
-     * @param opcode The mnemonic.
-     * @param operand The operand.
-     */
-    public Instruction(String opcode, String operand) { // Replace operand with the operand class once it's in
-        _mnemonic = opcode;
-        _operand = operand;
+    public Instruction(MnemonicToken mt, OperandToken ot) {
+        this.mt = mt;
+        this.ot = ot;
+        setRelative();
+    }
+
+    private void setRelative() {
+        if (mt.getOpsize() >= 8) {
+            isRelative = true;
+        }
+    }
+
+    public Boolean getRelative() {
+        return isRelative;
     }
 
     /**
-     * Convert the mnemonic to string representation.
+     * Checks if the operand needs resolving
+     * @return
      */
-    public String get_mnemonic() {
-        return _mnemonic;
+    public boolean isResolved() {
+        if (ot != null) {
+            // If the operand exists, return if it's been resolved
+            return ot.isResolved();
+        } else {
+            // A no-op instruction is always resolved
+            return true;
+        }
     }
 
-    public String get_operand() {
-        return _operand;
+    /**
+     * Should be called in the context of if (!inst.isResolved()) inst.resolve()
+     * @return if the instruction was successfully resolved
+     */
+    public boolean resolve(int currentAddr, SymbolTable<Integer> labelTable) {
+        if (ot != null) {
+            return ot.resolve(currentAddr, labelTable);
+        } else {
+            return true;
+        }
+    }
+
+    public String toString() {
+        String out = mt.getValue();
+        if (ot != null) {
+            out += " " + ot.getValue();
+        }
+        return out;
+    }
+
+    public MnemonicToken getMnemonic() {
+        return mt;
+    }
+
+    public OperandToken getOperand() {
+        return ot;
     }
 }
