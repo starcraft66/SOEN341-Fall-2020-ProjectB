@@ -66,7 +66,11 @@ public class Assembler {
             assemblyUnit.Assemble(false);
         }
         Logger.getLogger("").info("Assembly parsing done");
-        System.out.println(environment.getErrorReporter().getErrorLst().toString());
+
+        if(!environment.getErrorReporter().getErrorLst().isEmpty()) {
+            Logger.getLogger("").severe("The following errors were encountered:");
+            Logger.getLogger("").severe(environment.getErrorReporter().getErrorLst().toString());
+        }
     }
 
 }
