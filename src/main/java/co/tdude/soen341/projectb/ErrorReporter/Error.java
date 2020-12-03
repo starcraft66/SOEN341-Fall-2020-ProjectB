@@ -22,7 +22,8 @@ public class Error {
             UNRESOLVABLE,
             NEGATIVE,
             IOERROR,
-            NUMBERFORMAT
+            NUMBERFORMAT,
+            DIRECTIVE
 
 
         }
@@ -84,6 +85,10 @@ public class Error {
                     break;}
                 case NUMBERFORMAT:{
                     new Error("Number Format Error");
+                    break;
+                }
+                case DIRECTIVE:{
+                    new Error("Position: "+pos+" The Directive had a non-directive character in it.");
                     break;
                 }
                 default:{

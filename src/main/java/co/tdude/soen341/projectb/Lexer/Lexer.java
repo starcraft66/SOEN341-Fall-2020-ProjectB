@@ -134,10 +134,7 @@ public class Lexer implements ILexer {
         return _ch;
     }
 
-    /**
-     *Creates a new error and adds it to ErrorReporter
-     * @param msg: error message which is to be added to ErrorReporter
-     */
+
 
 
 
@@ -211,8 +208,9 @@ public class Lexer implements ILexer {
                 _ch = read();
             }
             else {
-                //TODO: handle error
-                LexerError("Position: "+ getPosition()+" The Directive had a non-directive character in it.");
+               Error e1=new Error();
+               e1.generatemsg(Error.err_type.DIRECTIVE, getPosition(), null);
+               ereport.record(e1);
             }
         }
 
