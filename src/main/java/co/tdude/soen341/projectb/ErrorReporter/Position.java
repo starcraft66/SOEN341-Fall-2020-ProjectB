@@ -1,8 +1,18 @@
 package co.tdude.soen341.projectb.ErrorReporter;
 
+/**
+ * Keeps track of the current column and line position.
+ */
 public class Position {
+    /**
+     * The current column position.
+     */
     private int column;
-     private int line;
+
+    /**
+     * The current line position.
+     */
+    private int line;
 
     /**
      * Constructor to create a new Position object.

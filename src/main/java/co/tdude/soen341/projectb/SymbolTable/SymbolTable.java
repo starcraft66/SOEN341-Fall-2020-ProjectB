@@ -1,25 +1,29 @@
 package co.tdude.soen341.projectb.SymbolTable;
 
-import co.tdude.soen341.projectb.Lexer.Tokens.Token;
-
 import java.util.HashMap;
 
 /**
- * Static class that holds symbol tables for mnemonics and labels.
+ *  Holds symbol tables for mnemonics and labels.
  */
 public class SymbolTable<T> {
-
-    public HashMap<String, T> getMap() {
-        return _table;
-    }
-
     /**
      * Hash map that holds the mnemonic strings as keys and their hex representations as values.
      */
     private HashMap<String, T> _table;
 
+    /**
+     * Constructor called when a new SymbolTable object is created.
+     */
     public SymbolTable() {
         _table = new HashMap<>();
+    }
+
+    /**
+     * Gets the hash map with all of the symbols.
+     * @return The symbol table.
+     */
+    public HashMap<String, T> getMap() {
+        return _table;
     }
 
     /**

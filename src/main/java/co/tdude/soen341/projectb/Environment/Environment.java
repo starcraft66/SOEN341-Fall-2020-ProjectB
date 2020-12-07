@@ -1,11 +1,8 @@
 package co.tdude.soen341.projectb.Environment;
 
+import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
 import co.tdude.soen341.projectb.Lexer.Lexer;
 import co.tdude.soen341.projectb.Reader.Reader;
-
-import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
-import co.tdude.soen341.projectb.ErrorReporter.ErrorReporter;
-
 
 import java.io.File;
 
@@ -29,7 +26,9 @@ public class Environment {
     */
    private Reader reader;
 
-   private SymbolTable symTable;
+   /**
+    * Used to log error messages.
+    */
    private ErrorReporter eReporter;
 
    /**
@@ -40,6 +39,10 @@ public class Environment {
       toolsAndFiles_init(asmFile);
    }
 
+   /**
+    * Initials the tools and files needed for the assembler environment.
+    * @param asmFile The assembly file.
+    */
    private void toolsAndFiles_init(File asmFile) {
       this.asmFile = asmFile;
       this.reader = new Reader(this.asmFile);
@@ -63,8 +66,11 @@ public class Environment {
       return asmFile;
    }
 
+   /**
+    * Gets the error reporter object.
+    * @return Error reporter object.
+    */
    public ErrorReporter getErrorReporter (){
       return eReporter;
    }
-
 }

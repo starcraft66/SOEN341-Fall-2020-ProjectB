@@ -11,5 +11,4 @@ public class EOLToken extends Token{
         super("\n");
         type = TokenType.EOL;
     }
-
 }

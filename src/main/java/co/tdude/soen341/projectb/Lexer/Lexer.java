@@ -38,6 +38,9 @@ public class Lexer implements ILexer {
      */
     private IReader _reader;
 
+    /**
+     * Error reporter object to log lexing errors.
+     */
     private ErrorReporter ereport;
 
     /**
@@ -64,6 +67,9 @@ public class Lexer implements ILexer {
         read(); // Prime the first character;
     }
 
+    /**
+     * Initiates the keyword word with the possible mnemonic tokens.
+     */
     private void InitKeywordTable() {
         // Inherent
         _keywordTable.put("halt", new MnemonicToken("halt", 0x00, false, 0) );
@@ -125,17 +131,16 @@ public class Lexer implements ILexer {
     private char read() {
         try {
             _ch = _reader.read();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             Error e1=new Error();
             e1.generatemsg(Error.err_type.IOERROR,null,null);
             ereport.record(e1);
             System.exit(1);
         }
+
         return _ch;
     }
-
-
-
 
 
     /*
@@ -144,6 +149,7 @@ public class Lexer implements ILexer {
      * because I'm lazy. It finally performs some final validation to ensure that the token is in the expected format
      * (e.g. a number does not have any non-number elements in it)
      */
+
 
     /**
      * Scans and returns an integer (No negative numbers allowed)
@@ -155,13 +161,17 @@ public class Lexer implements ILexer {
             _lexeme += _ch;
             _ch = read();
         }
+
         try {
             Integer.parseInt(_lexeme);
+
             return new NumberToken(_lexeme);
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             Error e1=new Error();
             e1.generatemsg(Error.err_type.NUMBERFORMAT, null, null);
-           ereport.record(e1);
+            ereport.record(e1);
+
             return new IllegalToken();
         }
     }
@@ -174,6 +184,7 @@ public class Lexer implements ILexer {
         while (!Character.isWhitespace(_ch) && _ch != '\0') {
             _curColPos++;
             _lexeme += _ch;
+
             if (!(Character.isAlphabetic(_ch) || Character.isDigit(_ch) || _ch == '.')) {
                 Error e1=new Error();
                 e1.generatemsg(Error.err_type.NONIDENT,getPosition(),null);
@@ -183,10 +194,6 @@ public class Lexer implements ILexer {
                 _ch = read();
             }
         }
-
-        // TODO: As per the current logic in the above while loop, the '.' can appear anywhere within the mnemonic.
-        // We only want it to appear after alphabetic characters are scanned.
-        // Write logic to search for it after the mnemonic is scanned.
 
         // This returns the MnemonicToken if it was found in the keyword table.
         return Objects.requireNonNullElseGet(_keywordTable.get(_lexeme), () -> new LabelToken(_lexeme));
@@ -242,11 +249,16 @@ public class Lexer implements ILexer {
         return new StringToken(_lexeme);
     }
 
+    /**
+     * Scans a comment when a ";" is encountered.
+     * @return a new CommentToken instance
+     */
     private Token scanComment() {
         while (_ch != '\n' && _ch != '\r' && _ch != '\0') { // Not endline or EOF
             _lexeme += _ch;
             _ch = read();
         }
+
         return new CommentToken(_lexeme);
     }
 
@@ -256,13 +268,6 @@ public class Lexer implements ILexer {
      */
     public Token getToken() {
         _lexeme = "";
-
-        //_ch = read(); This was removed because it advanced past the End of Word. It is the responsibility of the
-        // various scanX() functions to read() until their word is done
-
-        // Mark position (after skipping blanks)
-        //curlinePos = linePos;
-        //curcolPos = colPos;
 
         // skip whitespaces
         while (_ch == ' ' || _ch == '\t') {
@@ -317,11 +322,11 @@ public class Lexer implements ILexer {
                return scanString();
 
             default:
-            {  Error e1=new Error();
+                Error e1=new Error();
                 e1.generatemsg(Error.err_type.ILLEGALTOKEN,getPosition(),null);
                 ereport.record(e1);
                 read();
-                return new IllegalToken();}
+                return new IllegalToken();
         }
     }
 }

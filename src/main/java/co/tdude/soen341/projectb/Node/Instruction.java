@@ -8,25 +8,45 @@ import co.tdude.soen341.projectb.SymbolTable.SymbolTable;
  * Representation of an assembly instruction (mnemonic + opcode).
  */
 public class Instruction {
-
+    /**
+     * Identifies if the instruction is relative.
+     */
     private Boolean isRelative = false;
 
+    /**
+     * The mnemonic componenet of the instruction.
+     */
     private MnemonicToken mt;
-    
+
+    /**
+     * The operand componenet of the instruction.
+     */
     private OperandToken ot;
 
+    /**
+     * Constructor used to generate an Instruction object.
+     * @param mt
+     * @param ot
+     */
     public Instruction(MnemonicToken mt, OperandToken ot) {
         this.mt = mt;
         this.ot = ot;
         setRelative();
     }
 
+    /**
+     * Sets the status to relative instruction.
+     */
     private void setRelative() {
         if (mt.getOpsize() >= 8) {
             isRelative = true;
         }
     }
 
+    /**
+     * Gets the relative instruction status.
+     * @return
+     */
     public Boolean getRelative() {
         return isRelative;
     }
@@ -57,6 +77,10 @@ public class Instruction {
         }
     }
 
+    /**
+     * Generates a printable string.
+     * @return The string to be printed.
+     */
     public String toString() {
         String out = mt.getValue();
         if (ot != null) {
@@ -65,10 +89,18 @@ public class Instruction {
         return out;
     }
 
+    /**
+     * Gets the mnemonic token.
+     * @return Mnemonic token for the instruction.
+     */
     public MnemonicToken getMnemonic() {
         return mt;
     }
 
+    /**
+     * Gets the operand token.
+     * @return Operand token for the instruction.
+     */
     public OperandToken getOperand() {
         return ot;
     }
