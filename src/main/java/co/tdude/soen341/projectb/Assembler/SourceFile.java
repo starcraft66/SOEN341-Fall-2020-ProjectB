@@ -6,7 +6,6 @@ import java.io.File;
  * Stores the .asm source file being compiled.
  */
 public final class SourceFile {
-
 	/**
 	 * The File representation of the .asm file.
 	 */

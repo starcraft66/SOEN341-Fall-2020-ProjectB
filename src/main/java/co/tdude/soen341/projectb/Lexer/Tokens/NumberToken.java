@@ -23,7 +23,10 @@ public class NumberToken extends OperandToken {
     }
 
     /**
-     * Resolving a number always succeeds
+     * Resolves the operand. Resolving a number always succeeds.
+     * @param currentAddr The current memory address of the operand.
+     * @param labelTable The table of identified labels.
+     * @return True if resolved. False if unresolvable.
      */
     @Override
     public boolean resolve(int currentAddr, SymbolTable<Integer> labelTable) {

@@ -35,21 +35,26 @@ public class Assembler {
                 .help("Print verbose information")
                 .action(Arguments.storeTrue())
                 .required(false);
+
         Namespace ns = null;
+
         try {
             ns = parser.parseArgs(args);
-        } catch (ArgumentParserException e) {
+        }
+        catch (ArgumentParserException e) {
             parser.handleError(e);
             // We should return 1 here ideally but it causes IDEA not to show the
             // output and complain about the exit code
             System.exit(0);
         }
+
         if (ns.getBoolean("verbose")) {
             Logger.getLogger("").setLevel(Level.FINE);
             for (Handler h : Logger.getLogger("").getHandlers()) {
                 h.setLevel(Level.FINE);
             }
         }
+
         Logger.getLogger("").info("Starting assembly parsing");
         String asmFilePath = ns.getString("asmfile");
         File asmFile = new File(asmFilePath);
@@ -59,23 +64,30 @@ public class Assembler {
         AssemblyUnit assemblyUnit = assemblyParser.parse();
 
         Logger.getLogger("").info("Generating executable file");
+
         if (ns.getBoolean("listing")) {
             Logger.getLogger("").info("Generating listing file");
-            try{assemblyUnit.Assemble(true);}
-            catch (IOException e){
-                Error e1=new Error();
-                e1.generatemsg(Error.err_type.IOERROR, null, null);
-                environment.getErrorReporter().record(e1);
+            try {
+                assemblyUnit.Assemble(true);
             }
-        } else {
-            // Otherwise, just assemble it to exe with no listing
-            try{assemblyUnit.Assemble(false);}
             catch (IOException e){
                 Error e1=new Error();
                 e1.generatemsg(Error.err_type.IOERROR, null, null);
                 environment.getErrorReporter().record(e1);
             }
         }
+        else {
+            // Otherwise, just assemble it to exe with no listing
+            try{
+                assemblyUnit.Assemble(false);
+            }
+            catch (IOException e){
+                Error e1=new Error();
+                e1.generatemsg(Error.err_type.IOERROR, null, null);
+                environment.getErrorReporter().record(e1);
+            }
+        }
+
         Logger.getLogger("").info("Assembly parsing done");
 
         if(!environment.getErrorReporter().getErrorLst().isEmpty()) {
@@ -83,5 +95,4 @@ public class Assembler {
             Logger.getLogger("").severe(environment.getErrorReporter().getErrorLst().toString());
         }
     }
-
 }

@@ -41,6 +41,10 @@ public class LineStatement extends Node {
         return inst;
     }
 
+    /**
+     * Generates a printable string.
+     * @return The string to be printed.
+     */
     public String toString() {
         String out = "";
         if (label != null) {
@@ -55,6 +59,10 @@ public class LineStatement extends Node {
         return out;
     }
 
+    /**
+     * Gets the label token.
+     * @return Label token for the line statement.
+     */
     public LabelToken getLabel() {
         return label;
     }

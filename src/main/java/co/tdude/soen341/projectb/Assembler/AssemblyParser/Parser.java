@@ -79,8 +79,6 @@ public class Parser implements IParser {
         nextToken();
     }
 
-
-
     /**
      * Parses the assembly file for tokens, creates LineStatements, and adds them to a list.
      * @return The assembly unit that is comprised of all the LineStatements.
@@ -102,30 +100,10 @@ public class Parser implements IParser {
         return new AssemblyUnit(_assemblyUnit, _listingFilePath, _binaryFilePath);
     }
 
-//    /**
-//     * Parse a 1 Byte no Operand Mnemonic
-//     */
-//    private Instruction parseInherent() {
-//        return new Instruction((MnemonicToken) _token, null);
-//    }
-//
-//    private Instruction parseImmediate() {
-//        return new Instruction(_prevTokenValue, _token.getValue());
-//    }
-
-    //---------------------------------------------------------------------------------
-//    private Instruction parseRelative() {
-//        // your code...
-//    } TODO: Sprint 2
-    void assertMnemonic(Token t) {
-        if (!(t instanceof MnemonicToken)) {
-            Error e1=new Error();
-            e1.generatemsg(Error.err_type.MNEMONIC, _lexer.getPosition(), t);
-            errorReporter.record(e1);
-            throw new RuntimeException();
-        }
-    }
-
+    /**
+     * Ensures that the current token is of type OperandToken.
+     * @param t The token being tested.
+     */
     void assertOperand(Token t) {
         if (!(t instanceof OperandToken)) {
             Error e1=new Error();
@@ -135,6 +113,10 @@ public class Parser implements IParser {
         }
     }
 
+    /**
+     * Ensures that the current token is a line or file terminator.
+     * @param t The token being tested.
+     */
     void assertTerminator(Token t) {
         if (!(t instanceof EOLToken || t instanceof EOFToken || t instanceof CommentToken)) {
             Error e1=new Error();

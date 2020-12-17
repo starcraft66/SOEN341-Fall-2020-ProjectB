@@ -53,8 +53,6 @@ public class AssemblyUnit {
     */
     private ErrorReporter ereporter;
 
-    int currentAddr;
-
     /**
      * Constructor used to instantiate an AssemblyUnit object.
      * @param assemblyUnit The list of LineStatement objects that models the Assembly Unit.
@@ -77,7 +75,9 @@ public class AssemblyUnit {
      * @throws IOException if an unspecified IO error occurs
      */
     public void Assemble(boolean createListing) throws IOException {
-        try{binwriter = setupBinaryFile();}
+        try {
+            binwriter = setupBinaryFile();
+        }
         catch (IOException e)
         {
             Error e1=new Error();
@@ -86,12 +86,15 @@ public class AssemblyUnit {
         }
 
         if (createListing) {
-            try {lstwriter = setupListingFile();} // For the writer
-                catch (IOException e){
-                    Error e1=new Error();
-                    e1.generatemsg(Error.err_type.IOERROR, null, null);
-                    ereporter.record(e1);
-                }
+            try {
+                lstwriter = setupListingFile(); // For the writer
+            }
+            catch (IOException e){
+                Error e1=new Error();
+                e1.generatemsg(Error.err_type.IOERROR, null, null);
+                ereporter.record(e1);
+            }
+
             PrintHeader(); // For the console
         }
 
@@ -174,7 +177,9 @@ public class AssemblyUnit {
             // Increment addr if there was an instruction
             if (ls.getInst() != null) {
                 currentAddr++;
+
                 int opsz = ls.getInst().getMnemonic().getOpsize();
+
                 if (opsz >= 8) {
                     currentAddr += opsz/8;
                 }
@@ -186,7 +191,9 @@ public class AssemblyUnit {
             Logger.getLogger("").info("Label Table");
             String header = String.format("%-15s%-15s", "Label", "Addr");
             Logger.getLogger("").info(header);
+
             lstwriter.write("\n" + header + "\n\n");
+
             for (Map.Entry<String, Integer> lt : labelTable.getMap().entrySet()) {
                 String line = String.format("%-15s%-15s", lt.getKey(), lt.getValue());
                 Logger.getLogger("").info(line);
@@ -196,7 +203,6 @@ public class AssemblyUnit {
 
         binwriter.close();
         if (lstwriter != null) lstwriter.close();
-
     }
 
 
@@ -301,6 +307,7 @@ public class AssemblyUnit {
         else {
             var hexInstruction = Integer.toHexString(getBinaryRepresentation(ls.getInst()));
             var hexAddr = Integer.toHexString(currentAddr);
+
             return String.format("%-15s%-15s%-15s%-15s", lineCount, hexAddr, hexInstruction, ls.toString());
         }
     }
@@ -315,8 +322,6 @@ public class AssemblyUnit {
         File dstFile = new File(fileName);
 
         return new BufferedOutputStream(new FileOutputStream(dstFile));
-
-
     }
 
     /**
@@ -338,9 +343,8 @@ public class AssemblyUnit {
             e1.generatemsg(Error.err_type.IOERROR, null, null);
             ereporter.record(e1);
         }
+
         return writer;
-
-
     }
 
     /**
@@ -358,7 +362,6 @@ public class AssemblyUnit {
      */
     private void WriteHeader(FileWriter writer) throws IOException {
       writer.write(String.format("%-15s%-15s%-15s%-15s\n%n","Line", "Addr", "Hex Code", "Assembly Code"));
-
     }
 
     /**

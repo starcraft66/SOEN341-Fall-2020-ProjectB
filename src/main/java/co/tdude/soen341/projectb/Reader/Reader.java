@@ -10,8 +10,16 @@ import java.util.logging.Logger;
  * Used to read characters from the assembly file.
  */
 public class Reader implements IReader {
+    /**
+     * The buffered reader object for reading.
+     */
     private BufferedReader bfReader;
-    private  ErrorReporter ereporter=null;
+
+    /**
+     * The error reporter object.
+     */
+    private ErrorReporter ereporter = null;
+
     /**
      * Reads one character at a time from the assembly file.
      * @return The next character.
@@ -20,9 +28,8 @@ public class Reader implements IReader {
     @Override
     public char read() throws IOException{
         int nextChar = bfReader.read();
+
         return isEOFchar(nextChar) ? '\0' : (char) nextChar;
-
-
     }
 
     /**
@@ -42,12 +49,13 @@ public class Reader implements IReader {
      * If it fails, add an IO type error to ErrorReporter
      */
     public void closeReader ()  {
-       try {bfReader.close();}
-       catch(IOException e){
+       try {
+           bfReader.close();
+       }
+       catch (IOException e) {
            Error e1=new Error();
            e1.generatemsg(Error.err_type.IOERROR, null, null);
            ereporter.record(e1);
-
        }
     }
 
